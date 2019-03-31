@@ -10,16 +10,51 @@ stats::stats(PNG & im){
     // This is done to simplify distance computation. We calculate
     // the cumulative sums for X and Y separately, and then combine
     // them when we are doing color difference computation.
-/* your code here */
+    
+    this.sumHueX = sums(im, 0);
+	this.sumHueY = sums(im, 1);
+    this.sumSat = sums(im, 2);
+    this.sumLum = sums(im, 3);
 
+    // this.hist = buildHist(im);
 }
+
+vector<vector<double>> sums(PNG & im, int cComponent){
+    double sum = 0; 
+    vector<vector<double>> ret; 
+    //Nested for loop to cover all pixels
+    for(int x = 0; x < im->width(); x++){
+        for(int y = 0; y < im->height(); y++){
+            HSLAPixel * p = im.getPixel(); 
+            double componentVal;
+            if(cComponent == 0){
+                double h = p->h;
+                componentVal =  cos(h*PI/180);
+            }else if(cComponent == 1){
+                double h = p->h;
+                componentVal =  sin(h*PI/180);
+            }else if(cComponent == 2){
+                componentVal = p->s; 
+            }else if(cComponent == 3){
+                componentVal = p->l; 
+            }else{
+                cout<<"ERROR cComponent is not between 0-3!!\n"<<endl; 
+            } 
+
+            double entry = sum + componentVal; 
+            ret.at(x).push_back(entry);
+            sum += componentVal; 
+        }
+    }
+    return ret; 
+}
+
 
 long stats::rectArea(pair<int,int> ul, pair<int,int> lr){
 /* your code here */
     long xDiff = lr.first - ul.first;
     long yDiff = lr.second - ul.second; 
     return XDiff*yDiff; 
-
 }
 
 HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
@@ -32,14 +67,26 @@ HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
     // Y values using the arctan function. You should research the 
     // details of this. Finally, please set the average alpha channel to 
     // 1.0.
-    HSLAPixel * pixel = getPixel(unsigned int x, unsigned int y);
+    long area = rectArea(ul,rl); 
+    HSLAPixel * ret(0.0, 0.0, 0.0, 1.0);
+    //average sat 
+    double totalSat = this.sumSat.at(lr.first).at(lr.second) - this.sumSat.at(ul.first).at(ul.second); 
+    ret->s = totalSat / (double)area; 
 
-/* your code here */
+    //average lum
+    double totalLum = this.sumLum.at(lr.first).at(lr.second) - this.sumLum.at(ul.first).at(ul.second); 
+    ret->l = totalLum / (double)area; 
+
+    //average Hue
+    double averageHueY = (this.sumHueY.at(lr.first).at(lr.second) - this.sumHueY.at(ul.first).at(ul.second))/(double)area;
+    double averageHueX = (this.sumHueX.at(lr.first).at(lr.second) - this.sumHueX.at(ul.first).at(ul.second))/(double)area;
+
+    ret->h = atan2(averageHueY, averageHueX) * 180 / PI;
+
+    return ret; 
 }
 
 vector<int> stats::buildHist(pair<int,int> ul, pair<int,int> lr){
-
-/* your code here */
 }
 
 // takes a distribution and returns entropy

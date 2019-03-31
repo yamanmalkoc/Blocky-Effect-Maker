@@ -77,6 +77,14 @@ public:
      * pixels in bin i, and the sum is taken over all the bins. 
      * bins holding no pixels should not be included in the sum. */
     double entropy(vector<int> & d ,int area);
+
+    /*
+        Helper method to initialize private structures in this class. 
+        @Params:
+         im - the image to use
+         cComponent - int between 0 and 3 which indicates which field we are summing.
+    */
+    vector<vector<double>> sums(PNG & im, int cComponent);
 };
 
 #endif
