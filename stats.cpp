@@ -51,23 +51,50 @@ stats::stats(PNG & im){
 // }
 
 void stats::sums(PNG & im){
-    vector<vector<double>> ret(im.width(), vector<double>(0));
-    this->sumSat = ret; 
+    vector<vector<double>> sum(im.width(), vector<double>(0));
+    vector<vector<double>> lum(im.width(), vector<double>(0));
+    vector<vector<double>> hX(im.width(), vector<double>(0));
+    vector<vector<double>> hY(im.width(), vector<double>(0));
+    this->sumSat = sum; 
+    this->sumLum = lum; 
+    this->sumHueX = hX; 
+    this->sumHueY = hY; 
     for(int x = 0; x < im.width(); x++){
         for(int y = 0; y < im.height(); y++){
             HSLAPixel * p = im.getPixel(x,y); 
             double currSat = p->s; 
-            double entry = 0.0; 
+            double currLum = p->l; 
+            double currHueX = cos(p->h*PI/180); ;
+            double currHueY = sin(p->h*PI/180); 
+            double sum_entry = 0.0;
+            double lum_entry = 0.0;
+            double hX_entry = 0.0;
+            double hY_entry = 0.0; 
             if(x == 0 && y == 0){
-                entry = currSat; 
+                sum_entry = currSat;
+                lum_entry = currLum;
+                hX_entry  = currHueX; 
+                hY_entry  = currHueY;
             }else if(x == 0){
-                entry = this->sumSat[x][y-1] + currSat; 
+                sum_entry = this->sumSat[x][y-1] + currSat; 
+                lum_entry = this->sumLum[x][y-1] + currLum; 
+                hX_entry = this->sumHueX[x][y-1] + currHueX; 
+                hY_entry = this->sumHueY[x][y-1] + currHueY; 
             }else if(y == 0){
-                entry = this->sumSat[x-1][y] + currSat; 
+                sum_entry = this->sumSat[x-1][y] + currSat; 
+                lum_entry = this->sumLum[x-1][y] + currLum; 
+                hX_entry = this->sumHueX[x-1][y] + currHueX; 
+                hY_entry = this->sumHueY[x-1][y] + currHueY;
             }else{
-                entry = this->sumSat[x][y-1] + this->sumSat[x-1][y] - this->sumSat[x-1][y-1] + currSat;
+                sum_entry = this->sumSat[x][y-1] + this->sumSat[x-1][y] - this->sumSat[x-1][y-1] + currSat;
+                lum_entry = this->sumLum[x][y-1] + this->sumLum[x-1][y] - this->sumLum[x-1][y-1] + currLum; 
+                hX_entry = this->sumHueX[x][y-1] + this->sumHueX[x-1][y] - this->sumHueX[x-1][y-1] + currHueX; 
+                hY_entry = this->sumHueY[x][y-1] + this->sumHueY[x-1][y] - this->sumHueY[x-1][y-1] + currHueY; 
             }
-            this->sumSat.at(x).push_back(entry);
+            this->sumSat.at(x).push_back(sum_entry);
+            this->sumLum.at(x).push_back(lum_entry); 
+            this->sumHueX.at(x).push_back(hX_entry);
+            this->sumHueY.at(x).push_back(hY_entry);
         }   
     } 
     printVector(this->sumSat);
@@ -111,15 +138,15 @@ HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
     double totalSat = this->sumSat.at(lr.first).at(lr.second); 
     ret.s = totalSat / (double)area;
 
-    // //average lum
-    // double totalLum = this->sumLum.at(lr.first).at(lr.second); 
-    // ret.l = totalLum / (double)area; 
+    //average lum
+    double totalLum = this->sumLum.at(lr.first).at(lr.second); 
+    ret.l = totalLum / (double)area; 
 
-    // //average Hue
-    // double averageHueY = (this->sumHueY.at(lr.first).at(lr.second));
-    // double averageHueX = (this->sumHueX.at(lr.first).at(lr.second));
+    //average Hue
+    double averageHueY = (this->sumHueY.at(lr.first).at(lr.second));
+    double averageHueX = (this->sumHueX.at(lr.first).at(lr.second));
 
-    // ret.h = atan2(averageHueY, averageHueX) * 180 / PI;
+    ret.h = atan2(averageHueY, averageHueX) * 180 / PI;
 
     return ret;
 }
