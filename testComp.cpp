@@ -12,10 +12,10 @@ using namespace std;
 using namespace cs221util;
 
 
+
 TEST_CASE("stats::basic rectArea","[weight=1][part=stats]"){
 
     PNG data; data.resize(2,2);
-
     stats s(data);
     pair<int,int> ul(0,0);
     pair<int,int> lr(1,1);

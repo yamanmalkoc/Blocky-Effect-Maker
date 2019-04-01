@@ -11,51 +11,88 @@ stats::stats(PNG & im){
     // the cumulative sums for X and Y separately, and then combine
     // them when we are doing color difference computation.
     
-    this->sumHueX = sums(im, 0);
-	this->sumHueY = sums(im, 1);
-    this->sumSat = sums(im, 2);
-    this->sumLum = sums(im, 3);
+    sums(im);
+	// this->sumHueY = sums(im, 1);
+    // this->sumSat  = sums(im, 2);
+    // this->sumLum  = sums(im, 3);
 
     // this.hist = buildHist(im);
 }
 
-vector<vector<double>> stats::sums(PNG & im, int cComponent){
-    double sum = 0; 
-    vector<vector<double>> ret; 
-    //Nested for loop to cover all pixels
+// vector<vector<double>> stats::sums(PNG & im, int cComponent){
+//     double sum = 0.0; 
+//     vector<vector<double>> ret(im.width(), vector<double>(0));
+//     // printVector(ret);
+//     // cout<<"ret: "<<ret.at(0).at(1)<<endl;
+//     // //Nested for loop to cover all pixels
+//     for(int x = 0; x < im.width(); x++){
+//         for(int y = 0; y < im.height(); y++){
+//             HSLAPixel * p = im.getPixel(x,y); 
+//             double componentVal = 0.0;
+//             if(cComponent == 0){
+//                 double h = p->h;
+//                 componentVal =  cos(h*PI/180);
+//             }else if(cComponent == 1){
+//                 double h = p->h;
+//                 componentVal =  sin(h*PI/180);
+//             }else if(cComponent == 2){
+//                 componentVal = p->s; 
+//             }else if(cComponent == 3){
+//                 componentVal = p->l; 
+//             }else{
+//                 cout<<"ERROR cComponent is not between 0-3!!\n"<<endl; 
+//             } 
+//             double entry = sum + componentVal; 
+//             ret.at(x).push_back(entry);
+//             sum += componentVal; 
+//         }   
+//     }
+//     return ret; 
+// }
+
+void stats::sums(PNG & im){
+    vector<vector<double>> ret(im.width(), vector<double>(0));
+    this->sumSat = ret; 
     for(int x = 0; x < im.width(); x++){
         for(int y = 0; y < im.height(); y++){
             HSLAPixel * p = im.getPixel(x,y); 
-            double componentVal = 0.0;
-            if(cComponent == 0){
-                double h = p->h;
-                componentVal =  cos(h*PI/180);
-            }else if(cComponent == 1){
-                double h = p->h;
-                componentVal =  sin(h*PI/180);
-            }else if(cComponent == 2){
-                componentVal = p->s; 
-            }else if(cComponent == 3){
-                componentVal = p->l; 
+            double currSat = p->s; 
+            double entry = 0.0; 
+            if(x == 0 && y == 0){
+                entry = currSat; 
+            }else if(x == 0){
+                entry = this->sumSat[x][y-1] + currSat; 
+            }else if(y == 0){
+                entry = this->sumSat[x-1][y] + currSat; 
             }else{
-                cout<<"ERROR cComponent is not between 0-3!!\n"<<endl; 
-            } 
+                entry = this->sumSat[x][y-1] + this->sumSat[x-1][y] - this->sumSat[x-1][y-1] + currSat;
+            }
+            this->sumSat.at(x).push_back(entry);
+        }   
+    } 
+    printVector(this->sumSat);
+}
 
-            double entry = sum + componentVal; 
-            ret.at(x).push_back(entry);
-            sum += componentVal; 
+void stats::printVector( vector<vector<double>> ret){
+    cout<<"Printing Vector..."<<endl;
+    int x = ret.size();
+    int y = ret.at(0).size();
+    for(int i = 0; i < x; i++){
+        for(int j = 0; j < y; j++){
+            cout<<i<<","<<j<<": "<<ret.at(i).at(j)<<endl;
         }
     }
-    return ret; 
+    cout<<"Done printing Vector"<<endl;
 }
 
 
 long stats::rectArea(pair<int,int> ul, pair<int,int> lr){
     long xDiff = lr.first - ul.first;
     long yDiff = lr.second - ul.second; 
-    return xDiff*yDiff; 
+    return ++xDiff*++yDiff; 
 }
 
+//Assumes that the ul corner is always (0,0); 
 HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
 	// given a rectangle, return the average color value over the rect.
 	/* Each color component of the pixel is the average value of that 
@@ -66,29 +103,58 @@ HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
     // Y values using the arctan function. You should research the 
     // details of this. Finally, please set the average alpha channel to 
     // 1.0.
-
+    
     long area = rectArea(ul,lr); 
     HSLAPixel ret(0.0, 0.0, 0.0, 1.0);
-
+    // printVector(this->sumSat);
     //average sat 
-    double totalSat = this->sumSat.at(lr.first).at(lr.second) - this->sumSat.at(ul.first).at(ul.second); 
-    ret.s = totalSat / (double)area; 
+    double totalSat = this->sumSat.at(lr.first).at(lr.second); 
+    ret.s = totalSat / (double)area;
 
-    //average lum
-    double totalLum = this->sumLum.at(lr.first).at(lr.second) - this->sumLum.at(ul.first).at(ul.second); 
-    ret.l = totalLum / (double)area; 
+    // //average lum
+    // double totalLum = this->sumLum.at(lr.first).at(lr.second); 
+    // ret.l = totalLum / (double)area; 
 
-    //average Hue
-    double averageHueY = (this->sumHueY.at(lr.first).at(lr.second) - this->sumHueY.at(ul.first).at(ul.second))/(double)area;
-    double averageHueX = (this->sumHueX.at(lr.first).at(lr.second) - this->sumHueX.at(ul.first).at(ul.second))/(double)area;
+    // //average Hue
+    // double averageHueY = (this->sumHueY.at(lr.first).at(lr.second));
+    // double averageHueX = (this->sumHueX.at(lr.first).at(lr.second));
 
-    ret.h = atan2(averageHueY, averageHueX) * 180 / PI;
+    // ret.h = atan2(averageHueY, averageHueX) * 180 / PI;
 
     return ret;
 }
 
+
 vector<int> stats::buildHist(pair<int,int> ul, pair<int,int> lr){
 
+}
+
+/* hist[i][j][k]: hist[i][j] contains a histogram of the hue values 
+*   0 to 360 into bins of width 10, over the pixels in the rectangle
+*   defined by (0,0) through (i,j). For example, hist[i][j][k] contains
+*   the number of pixels whose hue value h, is: k*10 <= h < (k+1)*10. 
+*/ 
+// vector<vector<vector<int>>> stat::initHist(PNG & im){
+
+//     vector<vector<vector<int>>> ret(im.width(), im.height(), vector<int>(36)); 
+    
+
+//        for(int x = 0; x < im.width(); x++){
+//         for(int y = 0; y < im.height(); y++){
+//             if( )
+//         }   
+//     }
+
+// }
+
+int stats::findBin(PNG & im, int x, int y){
+    HSLAPixel * p = im.getPixel(x,y);
+    double h = p->h; 
+    for(double i = 0; i < 36; i++){
+        if(i*10 <= h  && h < (i+1)*10){
+            return i; 
+        }
+    }
 }
 
 // takes a distribution and returns entropy

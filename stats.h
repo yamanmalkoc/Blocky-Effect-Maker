@@ -79,12 +79,25 @@ public:
     double entropy(vector<int> & d ,int area);
 
     /*
-        Helper method to initialize private structures in this class. 
-        @Params:
-         im - the image to use
-         cComponent - int between 0 and 3 which indicates which field we are summing.
+    Helper method to initialize private structures in this class. 
+    @Params:
+    im - the image to use
+    cComponent - int between 0 and 3 which indicates which field we are summing.
     */
-    vector<vector<double>> sums(PNG & im, int cComponent);
+    void sums(PNG & im);
+
+    /*
+    Helper function to help debug. 
+    */
+    void printVector( vector<vector<double>> ret);
+
+    /*
+    Helper Function to initialize the histogram private variable. 
+    */
+    vector<vector<vector<int>>> initHist(PNG & im);
+
+    int findBin(PNG & im,int x,int y);
+
 };
 
 #endif
