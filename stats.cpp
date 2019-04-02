@@ -55,21 +55,24 @@ void stats::sums(PNG & im){
     vector<vector<double>> lum(im.width(), vector<double>(0));
     vector<vector<double>> hX(im.width(), vector<double>(0));
     vector<vector<double>> hY(im.width(), vector<double>(0));
+    // vector<vector<vector<int>>> hist(im.width(), vector<int>(im.height()), vector<vector<int>>(36));
+    vector<vector<vector<int>>> hist(im.width(), vector<vector<int>>(im.height(), vector<int>(36)));
     this->sumSat = sum; 
     this->sumLum = lum; 
     this->sumHueX = hX; 
     this->sumHueY = hY; 
+    this->hist = hist;
     for(int x = 0; x < im.width(); x++){
         for(int y = 0; y < im.height(); y++){
             HSLAPixel * p = im.getPixel(x,y); 
             double currSat = p->s; 
             double currLum = p->l; 
-            double currHueX = cos(p->h*PI/180); ;
+            double currHueX = cos(p->h*PI/180);
             double currHueY = sin(p->h*PI/180); 
             double sum_entry = 0.0;
             double lum_entry = 0.0;
-            double hX_entry = 0.0;
-            double hY_entry = 0.0; 
+            double hX_entry  = 0.0;
+            double hY_entry  = 0.0; 
             if(x == 0 && y == 0){
                 sum_entry = currSat;
                 lum_entry = currLum;
@@ -95,9 +98,28 @@ void stats::sums(PNG & im){
             this->sumLum.at(x).push_back(lum_entry); 
             this->sumHueX.at(x).push_back(hX_entry);
             this->sumHueY.at(x).push_back(hY_entry);
+            
+            this->hist[x][y] = histMaker(im,x,y);
         }   
     } 
     printVector(this->sumSat);
+}
+
+vector<int> stats::histMaker(PNG & im, int x, int y){
+    vector<int> ret(36);
+    ret[findBin(im, x, y)]++; 
+       for(int k = 0; k < 36; k++){
+            if(x == 0 && y == 0){
+                return ret;
+            }else if(x == 0){
+                ret[k] = this->hist[x][y-1][k] + ret[k]; 
+            }else if(y == 0){
+                ret[k] = this->hist[x-1][y][k] + ret[k];
+            }else{
+                ret[k] = this->hist[x][y-1][k] + this->hist[x-1][y][k] - this->hist[x-1][y-1][k] + ret[k]; 
+            } 
+        }
+    return ret;
 }
 
 void stats::printVector( vector<vector<double>> ret){
@@ -161,17 +183,14 @@ vector<int> stats::buildHist(pair<int,int> ul, pair<int,int> lr){
 *   defined by (0,0) through (i,j). For example, hist[i][j][k] contains
 *   the number of pixels whose hue value h, is: k*10 <= h < (k+1)*10. 
 */ 
-// vector<vector<vector<int>>> stat::initHist(PNG & im){
+// vector<vector<vector<int>>> stats::initHist(PNG & im){
 
-//     vector<vector<vector<int>>> ret(im.width(), im.height(), vector<int>(36)); 
-    
-
+//     vector<vector<vector<int>>> ret(im.width(), im.height(), vector<int>(36));
 //        for(int x = 0; x < im.width(); x++){
 //         for(int y = 0; y < im.height(); y++){
-//             if( )
+            
 //         }   
 //     }
-
 // }
 
 int stats::findBin(PNG & im, int x, int y){
@@ -182,6 +201,7 @@ int stats::findBin(PNG & im, int x, int y){
             return i; 
         }
     }
+    return -1;
 }
 
 // takes a distribution and returns entropy
@@ -189,8 +209,6 @@ int stats::findBin(PNG & im, int x, int y){
 double stats::entropy(vector<int> & distn,int area){
 
     double entropy = 0.;
-
-/* your code here */
 
     for (int i = 0; i < 36; i++) {
         if (distn[i] > 0 ) 

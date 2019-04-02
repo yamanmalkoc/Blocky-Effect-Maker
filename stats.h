@@ -98,6 +98,8 @@ public:
 
     int findBin(PNG & im,int x,int y);
 
+    vector<int> histMaker(PNG & im, int x, int y);
+
 };
 
 #endif
