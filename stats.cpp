@@ -152,24 +152,23 @@ HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
 }
 
 
-vector<int> stats::buildHist(pair<int,int> ul, pair<int,int> lr){
+vector<int> stats::buildHist(pair<int,int> ul, pair<int,int> lr){ 
+    if(ul.first == 0 && ul.second == 0)
+        return this->hist[lr.first][lr.second];
 
+    vector<int> ret(36);
+    for(int k = 0; k < 36; k++){
+        if(ul.first == 0){
+            ret[k] = this->hist[lr.first][lr.second][k] - this->hist[lr.first][ul.second - 1][k]; 
+        }else if(ul.second == 0){
+            ret[k] = this->hist[lr.first][lr.second][k] - this->hist[ul.first - 1][lr.second][k];
+        }else{
+            ret[k] = this->hist[lr.first][lr.second][k] - this->hist[lr.first][ul.second -1][k] - this->hist[ul.first - 1][lr.second][k] + this->hist[lr.first - 1][lr.second - 1][k]; 
+        }
+    }
+    return ret;
 }
 
-/* hist[i][j][k]: hist[i][j] contains a histogram of the hue values 
-*   0 to 360 into bins of width 10, over the pixels in the rectangle
-*   defined by (0,0) through (i,j). For example, hist[i][j][k] contains
-*   the number of pixels whose hue value h, is: k*10 <= h < (k+1)*10. 
-*/ 
-// vector<vector<vector<int>>> stats::initHist(PNG & im){
-
-//     vector<vector<vector<int>>> ret(im.width(), im.height(), vector<int>(36));
-//        for(int x = 0; x < im.width(); x++){
-//         for(int y = 0; y < im.height(); y++){
-            
-//         }   
-//     }
-// }
 
 int stats::findBin(PNG & im, int x, int y){
     HSLAPixel * p = im.getPixel(x,y);
@@ -200,6 +199,8 @@ double stats::entropy(vector<int> & distn,int area){
 
 double stats::entropy(pair<int,int> ul, pair<int,int> lr){
 
-/* your code here */
+    int area = rectArea(ul,lr);
+    vector<int> hist = buildHist(ul,lr);
+    return entropy(hist, area);
 
 }
