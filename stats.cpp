@@ -163,7 +163,7 @@ vector<int> stats::buildHist(pair<int,int> ul, pair<int,int> lr){
         }else if(ul.second == 0){
             ret[k] = this->hist[lr.first][lr.second][k] - this->hist[ul.first - 1][lr.second][k];
         }else{
-            ret[k] = this->hist[lr.first][lr.second][k] - this->hist[lr.first][ul.second -1][k] - this->hist[ul.first - 1][lr.second][k] + this->hist[lr.first - 1][lr.second - 1][k]; 
+            ret[k] = this->hist[lr.first][lr.second][k] - this->hist[lr.first][ul.second -1][k] - this->hist[ul.first - 1][lr.second][k] + this->hist[ul.first - 1][ul.second - 1][k]; 
         }
     }
     return ret;
