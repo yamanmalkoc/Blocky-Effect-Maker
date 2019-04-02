@@ -140,10 +140,10 @@ HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
         totalHueX = this->sumHueX[lr.first][lr.second] - this->sumHueX[ul.first - 1][lr.second];
         totalHueY = this->sumHueY[lr.first][lr.second] - this->sumHueY[ul.first - 1][lr.second];
     }else{
-        totalSat = this->sumSat[lr.first][lr.second] - this->sumSat[lr.first][ul.second -1] - this->sumSat[ul.first - 1][lr.second] + this->sumSat[lr.first - 1][lr.second - 1];
-        totalLum = this->sumLum[lr.first][lr.second] - this->sumLum[lr.first][ul.second -1] - this->sumLum[ul.first - 1][lr.second] + this->sumLum[lr.first - 1][lr.second - 1];
-        totalHueX = this->sumHueX[lr.first][lr.second] - this->sumHueX[lr.first][ul.second -1] - this->sumHueX[ul.first - 1][lr.second] + this->sumHueX[lr.first - 1][lr.second - 1];
-        totalHueY = this->sumHueY[lr.first][lr.second] - this->sumHueY[lr.first][ul.second -1] - this->sumHueY[ul.first - 1][lr.second] + this->sumHueY[lr.first - 1][lr.second - 1]; 
+        totalSat = this->sumSat[lr.first][lr.second] - this->sumSat[lr.first][ul.second -1] - this->sumSat[ul.first - 1][lr.second] + this->sumSat[ul.first - 1][ul.second - 1];
+        totalLum = this->sumLum[lr.first][lr.second] - this->sumLum[lr.first][ul.second -1] - this->sumLum[ul.first - 1][lr.second] + this->sumLum[ul.first - 1][ul.second - 1];
+        totalHueX = this->sumHueX[lr.first][lr.second] - this->sumHueX[lr.first][ul.second -1] - this->sumHueX[ul.first - 1][lr.second] + this->sumHueX[ul.first - 1][ul.second - 1];
+        totalHueY = this->sumHueY[lr.first][lr.second] - this->sumHueY[lr.first][ul.second -1] - this->sumHueY[ul.first - 1][lr.second] + this->sumHueY[ul.first - 1][ul.second - 1]; 
     }
     ret.s = totalSat / (double)area;
     ret.l = totalLum / (double)area;
