@@ -12,50 +12,13 @@ stats::stats(PNG & im){
     // them when we are doing color difference computation.
     
     sums(im);
-	// this->sumHueY = sums(im, 1);
-    // this->sumSat  = sums(im, 2);
-    // this->sumLum  = sums(im, 3);
-
-    // this.hist = buildHist(im);
 }
-
-// vector<vector<double>> stats::sums(PNG & im, int cComponent){
-//     double sum = 0.0; 
-//     vector<vector<double>> ret(im.width(), vector<double>(0));
-//     // printVector(ret);
-//     // cout<<"ret: "<<ret.at(0).at(1)<<endl;
-//     // //Nested for loop to cover all pixels
-//     for(int x = 0; x < im.width(); x++){
-//         for(int y = 0; y < im.height(); y++){
-//             HSLAPixel * p = im.getPixel(x,y); 
-//             double componentVal = 0.0;
-//             if(cComponent == 0){
-//                 double h = p->h;
-//                 componentVal =  cos(h*PI/180);
-//             }else if(cComponent == 1){
-//                 double h = p->h;
-//                 componentVal =  sin(h*PI/180);
-//             }else if(cComponent == 2){
-//                 componentVal = p->s; 
-//             }else if(cComponent == 3){
-//                 componentVal = p->l; 
-//             }else{
-//                 cout<<"ERROR cComponent is not between 0-3!!\n"<<endl; 
-//             } 
-//             double entry = sum + componentVal; 
-//             ret.at(x).push_back(entry);
-//             sum += componentVal; 
-//         }   
-//     }
-//     return ret; 
-// }
 
 void stats::sums(PNG & im){
     vector<vector<double>> sum(im.width(), vector<double>(0));
     vector<vector<double>> lum(im.width(), vector<double>(0));
     vector<vector<double>> hX(im.width(), vector<double>(0));
     vector<vector<double>> hY(im.width(), vector<double>(0));
-    // vector<vector<vector<int>>> hist(im.width(), vector<int>(im.height()), vector<vector<int>>(36));
     vector<vector<vector<int>>> hist(im.width(), vector<vector<int>>(im.height(), vector<int>(36)));
     this->sumSat = sum; 
     this->sumLum = lum; 
@@ -98,7 +61,6 @@ void stats::sums(PNG & im){
             this->sumLum.at(x).push_back(lum_entry); 
             this->sumHueX.at(x).push_back(hX_entry);
             this->sumHueY.at(x).push_back(hY_entry);
-            
             this->hist[x][y] = histMaker(im,x,y);
         }   
     } 
@@ -157,19 +119,35 @@ HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
     HSLAPixel ret(0.0, 0.0, 0.0, 1.0);
     // printVector(this->sumSat);
     //average sat 
-    double totalSat = this->sumSat.at(lr.first).at(lr.second); 
+    double totalSat;
+    double totalLum;
+    double totalHueX;
+    double totalHueY;
+
+    if(ul.first == 0 && ul.second == 0){
+        totalSat = this->sumSat[lr.first][lr.second];
+        totalLum = this->sumLum[lr.first][lr.second];
+        totalHueX = this->sumHueX[lr.first][lr.second];
+        totalHueY = this->sumHueY[lr.first][lr.second]; 
+    }else if(ul.first == 0){
+        totalSat = this->sumSat[lr.first][lr.second] - this->sumSat[lr.first][ul.second - 1]; 
+        totalLum = this->sumLum[lr.first][lr.second] - this->sumLum[lr.first][ul.second - 1];
+        totalHueX = this->sumHueX[lr.first][lr.second] - this->sumHueX[lr.first][ul.second - 1];
+        totalHueY = this->sumHueY[lr.first][lr.second] - this->sumHueY[lr.first][ul.second - 1]; 
+    }else if(ul.second == 0){
+        totalSat = this->sumSat[lr.first][lr.second] - this->sumSat[ul.first - 1][lr.second];
+        totalLum = this->sumLum[lr.first][lr.second] - this->sumLum[ul.first - 1][lr.second];
+        totalHueX = this->sumHueX[lr.first][lr.second] - this->sumHueX[ul.first - 1][lr.second];
+        totalHueY = this->sumHueY[lr.first][lr.second] - this->sumHueY[ul.first - 1][lr.second];
+    }else{
+        totalSat = this->sumSat[lr.first][lr.second] - this->sumSat[lr.first][ul.second -1] - this->sumSat[ul.first - 1][lr.second] + this->sumSat[lr.first - 1][lr.second - 1];
+        totalLum = this->sumLum[lr.first][lr.second] - this->sumLum[lr.first][ul.second -1] - this->sumLum[ul.first - 1][lr.second] + this->sumLum[lr.first - 1][lr.second - 1];
+        totalHueX = this->sumHueX[lr.first][lr.second] - this->sumHueX[lr.first][ul.second -1] - this->sumHueX[ul.first - 1][lr.second] + this->sumHueX[lr.first - 1][lr.second - 1];
+        totalHueY = this->sumHueY[lr.first][lr.second] - this->sumHueY[lr.first][ul.second -1] - this->sumHueY[ul.first - 1][lr.second] + this->sumHueY[lr.first - 1][lr.second - 1]; 
+    }
     ret.s = totalSat / (double)area;
-
-    //average lum
-    double totalLum = this->sumLum.at(lr.first).at(lr.second); 
-    ret.l = totalLum / (double)area; 
-
-    //average Hue
-    double averageHueY = (this->sumHueY.at(lr.first).at(lr.second));
-    double averageHueX = (this->sumHueX.at(lr.first).at(lr.second));
-
-    ret.h = atan2(averageHueY, averageHueX) * 180 / PI;
-
+    ret.l = totalLum / (double)area;
+    ret.h = atan2(totalHueY, totalHueX) * 180 / PI;
     return ret;
 }
 
