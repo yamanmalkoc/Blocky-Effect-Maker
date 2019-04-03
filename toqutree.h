@@ -134,6 +134,15 @@ public:
    PNG render();
 
    /*
+      Helper Function to create the picture using recursion. 
+   */
+   PNG render(Node *root);
+
+   PNG createImage(PNG NE, PNG NW, PNG SE, PNG SW);
+
+   PNG getNodePNG(Node * n);
+
+   /*
     *  Prune function trims subtrees as high as possible in the tree.
     *  A subtree is pruned (cleared) if ALL of the subtree's leaves are within 
     *  tol of the average color stored in the root of the subtree. 
