@@ -64,6 +64,29 @@ TEST_CASE("stats::basic entropy","[weight=1][part=stats]"){
     REQUIRE(result == 2);
 }
 
+TEST_CASE("toqutree::basic crop_func","[weight=1][part=toqutree]"){
+    PNG img;
+    img.readFromFile("images/stanleySquare.png");
+    printf("Inside");
+    toqutree t1(img,9);
+    printf("outside");
+
+
+    //REQUIRE(out==img);
+}
+
+TEST_CASE("toqutree::basic buildtree/Yaman","[weight=1][part=toqutree]"){
+    PNG img;
+    img.readFromFile("images/stanleySquare.png");
+    printf("Inside");
+    toqutree t1(img,9);
+    printf("outside");
+
+
+    //REQUIRE(out==img);
+}
+
+
 TEST_CASE("toqutree::basic ctor render","[weight=1][part=toqutree]"){
     PNG img;
     img.readFromFile("images/stanleySquare.png");

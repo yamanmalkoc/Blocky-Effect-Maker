@@ -10,7 +10,83 @@ stats::stats(PNG & im){
     // This is done to simplify distance computation. We calculate
     // the cumulative sums for X and Y separately, and then combine
     // them when we are doing color difference computation.
+<<<<<<< Updated upstream
 /* your code here */
+=======
+    
+    sums(im);
+}
+
+void stats::sums(PNG & im){
+    vector<vector<double>> sum(im.width(), vector<double>(0));
+    vector<vector<double>> lum(im.width(), vector<double>(0));
+    vector<vector<double>> hX(im.width(), vector<double>(0));
+    vector<vector<double>> hY(im.width(), vector<double>(0));
+    vector<vector<vector<int>>> hist(im.width(), vector<vector<int>>(im.height(), vector<int>(36)));
+    this->sumSat = sum; 
+    this->sumLum = lum; 
+    this->sumHueX = hX; 
+    this->sumHueY = hY; 
+    this->hist = hist;
+    for(int x = 0; x < im.width(); x++){
+        for(int y = 0; y < im.height(); y++){
+            HSLAPixel * p = im.getPixel(x,y); 
+            double currSat = p->s; 
+            double currLum = p->l; 
+            double currHueX = cos(p->h*PI/180);
+            double currHueY = sin(p->h*PI/180); 
+            double sum_entry = 0.0;
+            double lum_entry = 0.0;
+            double hX_entry  = 0.0;
+            double hY_entry  = 0.0; 
+            if(x == 0 && y == 0){
+                sum_entry = currSat;
+                lum_entry = currLum;
+                hX_entry  = currHueX; 
+                hY_entry  = currHueY;
+            }else if(x == 0){
+                sum_entry = this->sumSat[x][y-1] + currSat; 
+                lum_entry = this->sumLum[x][y-1] + currLum; 
+                hX_entry = this->sumHueX[x][y-1] + currHueX; 
+                hY_entry = this->sumHueY[x][y-1] + currHueY; 
+            }else if(y == 0){
+                sum_entry = this->sumSat[x-1][y] + currSat; 
+                lum_entry = this->sumLum[x-1][y] + currLum; 
+                hX_entry = this->sumHueX[x-1][y] + currHueX; 
+                hY_entry = this->sumHueY[x-1][y] + currHueY;
+            }else{
+                sum_entry = this->sumSat[x][y-1] + this->sumSat[x-1][y] - this->sumSat[x-1][y-1] + currSat;
+                lum_entry = this->sumLum[x][y-1] + this->sumLum[x-1][y] - this->sumLum[x-1][y-1] + currLum; 
+                hX_entry = this->sumHueX[x][y-1] + this->sumHueX[x-1][y] - this->sumHueX[x-1][y-1] + currHueX; 
+                hY_entry = this->sumHueY[x][y-1] + this->sumHueY[x-1][y] - this->sumHueY[x-1][y-1] + currHueY; 
+            }
+            this->sumSat.at(x).push_back(sum_entry);
+            this->sumLum.at(x).push_back(lum_entry); 
+            this->sumHueX.at(x).push_back(hX_entry);
+            this->sumHueY.at(x).push_back(hY_entry);
+            this->hist[x][y] = histMaker(im,x,y);
+        }   
+    } 
+    //printVector(this->sumSat);
+}
+
+vector<int> stats::histMaker(PNG & im, int x, int y){
+    vector<int> ret(36);
+    ret[findBin(im, x, y)]++; 
+       for(int k = 0; k < 36; k++){
+            if(x == 0 && y == 0){
+                return ret;
+            }else if(x == 0){
+                ret[k] = this->hist[x][y-1][k] + ret[k]; 
+            }else if(y == 0){
+                ret[k] = this->hist[x-1][y][k] + ret[k];
+            }else{
+                ret[k] = this->hist[x][y-1][k] + this->hist[x-1][y][k] - this->hist[x-1][y-1][k] + ret[k]; 
+            } 
+        }
+    return ret;
+}
+>>>>>>> Stashed changes
 
 }
 

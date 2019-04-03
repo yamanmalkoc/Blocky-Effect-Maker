@@ -133,6 +133,16 @@ public:
     */
    PNG render();
 
+  /**
+   * A helper function to be called in the tree constructor
+   * @param img: image to be cropped
+   * @param ul: upper left pixel of the rectangle you want to crop
+   * @param lr: lower right pixel of the rectangle you want to crop
+   * @returns a new, copy of the part of the input image between
+   * the two pixel locations ul,rn given.
+   * */
+   PNG cropImage(PNG & img, pair<int,int> ul, pair<int,int> lr, int mod);
+
    /*
     *  Prune function trims subtrees as high as possible in the tree.
     *  A subtree is pruned (cleared) if ALL of the subtree's leaves are within 
