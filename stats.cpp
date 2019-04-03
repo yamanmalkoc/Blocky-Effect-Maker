@@ -64,7 +64,7 @@ void stats::sums(PNG & im){
             this->hist[x][y] = histMaker(im,x,y);
         }   
     } 
-    printVector(this->sumSat);
+    // print,Vector(this->sumSat);
 }
 
 vector<int> stats::histMaker(PNG & im, int x, int y){
@@ -98,22 +98,12 @@ void stats::printVector( vector<vector<double>> ret){
 
 
 long stats::rectArea(pair<int,int> ul, pair<int,int> lr){
-    long xDiff = lr.first - ul.first;
-    long yDiff = lr.second - ul.second; 
-    return ++xDiff*++yDiff; 
+    pair<int,int> dims = getDim(ul,lr);
+    return dims.first*dims.second;
 }
 
 //Assumes that the ul corner is always (0,0); 
 HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
-	// given a rectangle, return the average color value over the rect.
-	/* Each color component of the pixel is the average value of that 
-	* component over the rectangle.
-	* @param ul is (x,y) of the upper left corner of the rectangle 
-	* @param lr is (x,y) of the lower right corner of the rectangle */
-    // The average hue value can be computed from the average X and
-    // Y values using the arctan function. You should research the 
-    // details of this. Finally, please set the average alpha channel to 
-    // 1.0.
     
     long area = rectArea(ul,lr); 
     HSLAPixel ret(0.0, 0.0, 0.0, 1.0);
@@ -169,6 +159,56 @@ vector<int> stats::buildHist(pair<int,int> ul, pair<int,int> lr){
     return ret;
 }
 
+vector<int> stats::getDistn(pair<int,int> ul, pair<int,int> lr){
+    //Normal scenario with no wrapping
+    if(ul.first < lr.first && ul.second < lr.second)
+        return buildHist(ul,lr);
+   
+    
+    //Wrapping from the bottom corner, splits into four rects
+    if(lr.first < ul.first && lr.second < ul.second){
+
+    }
+
+
+}
+
+pair<int,int> stats::getDim(pair<int,int> ul, pair<int,int> lr){
+    pair<int,int> ret; 
+    long xDiff = 0;
+    long yDiff = 0;
+    //Normal scenario with no wrapping
+    if(ul.first < lr.first && ul.second < lr.second)
+        xDiff = lr.first - ul.first;
+        yDiff = lr.second - ul.second; 
+        ret.first = ++xDiff;
+        ret.second = ++yDiff;
+        return ret;  
+
+    //Wrapping from the bottom corner, splits into four rects
+    if(lr.first < ul.first && lr.second < ul.second)
+        xDiff =  ul.first - lr.first;
+        yDiff =  ul.second - lr.second; 
+        ret.first = --xDiff;
+        ret.second = --yDiff;
+        return ret;  
+    //the x of the upperleft is larger than that of Lower right
+    if(ul.first > lr.first)
+        xDiff =  ul.first - lr.first;
+        yDiff = lr.second - ul.second;
+        ret.first = --xDiff;
+        ret.second = ++yDiff;
+        return ret; 
+
+    //the y of the upperleft is larger than that of Lower right
+    if(ul.second > lr.second)
+        xDiff = lr.second - ul.second;
+        yDiff = ul.first - lr.first;
+        ret.first = ++xDiff;
+        ret.second = --yDiff;
+        return ret; 
+}
+
 
 int stats::findBin(PNG & im, int x, int y){
     HSLAPixel * p = im.getPixel(x,y);
@@ -192,9 +232,7 @@ double stats::entropy(vector<int> & distn,int area){
             entropy += ((double) distn[i]/(double) area) 
                                     * log2((double) distn[i]/(double) area);
     }
-
     return  -1 * entropy;
-
 }
 
 double stats::entropy(pair<int,int> ul, pair<int,int> lr){

@@ -100,6 +100,9 @@ public:
 
     vector<int> histMaker(PNG & im, int x, int y);
 
+    pair<int,int> getDim(pair<int,int> ul, pair<int,int> lr);
+
+    vector<int> getDistn(pair<int,int> ul, pair<int,int> lr);
 };
 
 #endif
