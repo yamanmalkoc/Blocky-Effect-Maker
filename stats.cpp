@@ -150,53 +150,54 @@ HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
       //Normal scenario with no wrapping
     if(ul.first < lr.first && ul.second < lr.second)
         return getAvgNoWrap(ul,lr);
-
-    pair<int,int> dims = getDim(ul,lr); 
-    int width = ul.first + dims.first - (lr.first + 1);
-    int height = ul.second + dims.second - (lr.second + 1);
-    //Wrapping from the bottom corner, splits into four rects
-    if(lr.first < ul.first && lr.second < ul.second){
-        pair<int,int> lr1;
-        lr1.first = width - 1; 
-        lr1.second = height - 1; 
-        HSLAPixel rect1 = getAvgNoWrap(ul,lr1);
-        pair<int,int> ul2(lr.first,ul.second);
-        pair<int,int> lr2(lr.first,height - 1);
-        HSLAPixel rect2 = getAvgNoWrap(ul2,lr2);
-        pair<int,int> ul3(ul.first,lr.second);
-        pair<int,int> lr3(width - 1, lr.second);
-        HSLAPixel rect3 = getAvgNoWrap(ul3,lr3);
-        pair<int,int> zero(0,0); 
-        HSLAPixel rect4 = getAvgNoWrap(zero,lr);
-        return merge(rect1,rect2,rect3,rect4,rectArea(ul,lr)); 
-    }
+    HSLAPixel ret;
+    return ret; 
+    // pair<int,int> dims = getDim(ul,lr); 
+    // int width = ul.first + dims.first - (lr.first + 1);
+    // int height = ul.second + dims.second - (lr.second + 1);
+    // //Wrapping from the bottom corner, splits into four rects
+    // if(lr.first < ul.first && lr.second < ul.second){
+    //     pair<int,int> lr1;
+    //     lr1.first = width - 1; 
+    //     lr1.second = height - 1; 
+    //     HSLAPixel rect1 = getAvgNoWrap(ul,lr1);
+    //     pair<int,int> ul2(lr.first,ul.second);
+    //     pair<int,int> lr2(lr.first,height - 1);
+    //     HSLAPixel rect2 = getAvgNoWrap(ul2,lr2);
+    //     pair<int,int> ul3(ul.first,lr.second);
+    //     pair<int,int> lr3(width - 1, lr.second);
+    //     HSLAPixel rect3 = getAvgNoWrap(ul3,lr3);
+    //     pair<int,int> zero(0,0); 
+    //     HSLAPixel rect4 = getAvgNoWrap(zero,lr);
+    //     return merge(rect1,rect2,rect3,rect4,rectArea(ul,lr)); 
+    // }
         
-    //the x of the upperleft is larger than that of Lower right
-    if(ul.first > lr.first){
-        //create two rectangles to combind to get the distribution
-        pair<int,int> lr1;
-        lr1.first = width - 1; 
-        lr1.second = lr.second; 
-        HSLAPixel rect1 = getAvgNoWrap(ul,lr1); 
-        pair<int,int> ul2;
-        ul2.first = lr.first;
-        ul2.second = ul.second; 
-        HSLAPixel rect2 = getAvgNoWrap(ul2,lr);
-        return merge(rect1, rect2,rectArea(ul,lr)); 
-    }
+    // //the x of the upperleft is larger than that of Lower right
+    // if(ul.first > lr.first){
+    //     //create two rectangles to combind to get the distribution
+    //     pair<int,int> lr1;
+    //     lr1.first = width - 1; 
+    //     lr1.second = lr.second; 
+    //     HSLAPixel rect1 = getAvgNoWrap(ul,lr1); 
+    //     pair<int,int> ul2;
+    //     ul2.first = lr.first;
+    //     ul2.second = ul.second; 
+    //     HSLAPixel rect2 = getAvgNoWrap(ul2,lr);
+    //     return merge(rect1, rect2,rectArea(ul,lr)); 
+    // }
         
-    //the y of the upperleft is larger than that of Lower right
-    if(ul.second > lr.second){
-        pair<int,int> lr1;
-        lr1.first = lr.first; 
-        lr1.second = height - 1;
-        HSLAPixel rect1 = getAvgNoWrap(ul,lr1); 
-        pair<int,int> ul2;
-        ul2.first = ul.first;
-        ul2.second = lr.second; 
-        HSLAPixel rect2 = getAvgNoWrap(ul2,lr);
-        return merge(rect1, rect2, rectArea(ul,lr)); 
-    }
+    // //the y of the upperleft is larger than that of Lower right
+    // if(ul.second > lr.second){
+    //     pair<int,int> lr1;
+    //     lr1.first = lr.first; 
+    //     lr1.second = height - 1;
+    //     HSLAPixel rect1 = getAvgNoWrap(ul,lr1); 
+    //     pair<int,int> ul2;
+    //     ul2.first = ul.first;
+    //     ul2.second = lr.second; 
+    //     HSLAPixel rect2 = getAvgNoWrap(ul2,lr);
+    //     return merge(rect1, rect2, rectArea(ul,lr)); 
+    // }
 }
 
 HSLAPixel stats::getAvgNoWrap(pair<int,int> ul, pair<int,int> lr){
@@ -338,8 +339,6 @@ HSLAPixel stats::merge(HSLAPixel p1, HSLAPixel p2, HSLAPixel p3, HSLAPixel p4, l
         // }
         return ret; 
 }
-
-
 
 
 // takes a distribution and returns entropy
