@@ -235,7 +235,7 @@ HSLAPixel stats::getTotalNoWrap(pair<int,int> ul, pair<int,int> lr){
     ret.l = totalLum / (double)area;
     double avgHueX = totalHueX / (double)area; 
     double avgHueY = totalHueY / (double)area; 
-    ret.h = atan2(totalHueY, totalHueX) * 180 / PI;
+    ret.h = atan2(avgHueX, avgHueY) * 180 / PI;
     return ret;
 }
 
