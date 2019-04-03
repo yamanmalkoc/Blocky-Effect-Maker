@@ -256,7 +256,7 @@ vector<int> stats::buildHist(pair<int,int> ul, pair<int,int> lr){
 
 vector<int> stats::getDistn(pair<int,int> ul, pair<int,int> lr){
     //Normal scenario with no wrapping
-    if(ul.first < lr.first && ul.second < lr.second)
+    if(ul.first <= lr.first && ul.second <= lr.second)
         return buildHist(ul,lr);
 
     pair<int,int> dims = getDim(ul,lr); 
