@@ -55,7 +55,7 @@ printf("YOOOOOOOOO");
 	pair<int,int> optimal_point;
 	optimal_point.first = pow(2, k - 2);
 	optimal_point.second = pow(2, k - 2);
-	printf("OptimalX: %i, OptimalY %i", optimal_point.first, optimal_point.second);
+	printf("OptimalX: %i, OptimalY %i\n", optimal_point.first, optimal_point.second);
 
 	double min_entropy = 100.0;
 
@@ -109,64 +109,68 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 	pair<int,int> NWul;
 	pair<int,int> NWlr;
 	pair<int,int> optimal_point;
+
+	stats image(*im);
 	
 	double min_entropy = 0.0;
 	double average_entropy = 100.0;
 	int offset = pow(2, k - 2);
 	int inner_square_size = pow(2,k-1);
+	int mod = (int)pow(2, k);
 
 	//Two for loops creates all possible 4 image nodes and finds the optimal one
 	for(int i = offset; i < inner_square_size + offset; i++) {
 		for(int j = offset; j < inner_square_size + offset; j++){
 			//Crop the image for SE part
-			SEul.first = i;
-			SEul.second = j;
-			SElr.first = i + pow(2, k - 1) - 1;
-			SElr.second = j + pow(2, k - 1) - 1;
-			PNG partSEimg = cropImage(*im, SEul, SElr, pow(2,k));
+			SEul.first = (i) % mod;
+			SEul.second = (j) % mod;
+			SElr.first = (i + (int)pow(2, k - 1) - 1) % mod;
+			SElr.second = (j + (int)pow(2, k - 1) - 1) % mod;
+			//PNG partSEimg = cropImage(*im, SEul, SElr, pow(2,k));
 			//Crop the image for SW part
-			SWul.first = i + pow(2, k - 1);
-			SWul.second = j;
-			SWlr.first = i + pow(2, k - 1) + pow(2, k - 1) - 1;
-			SWlr.second = j + pow(2, k - 1) - 1;
-			PNG partSWimg = cropImage(*im, SWul, SWlr, pow(2,k));
+			SWul.first = (i + (int)pow(2, k - 1)) % mod;
+			SWul.second = (j) % mod;
+			SWlr.first = (i + (int)pow(2, k - 1) + (int)pow(2, k - 1) - 1) % mod;
+			SWlr.second = (j + (int)pow(2, k - 1) - 1) % mod;
+			//PNG partSWimg = cropImage(*im, SWul, SWlr, pow(2,k));
 			//Crop the image for NE part
-			NEul.first = i;
-			NEul.second = j + pow(2, k - 1);
-			NElr.first = i + pow(2, k - 1) - 1;
-			NElr.second = j + pow(2, k - 1) + pow(2, k - 1) - 1;
-			PNG partNEimg = cropImage(*im, NEul, NElr, pow(2,k));
+			NEul.first = (i) % mod;
+			NEul.second = (j + (int)pow(2, k - 1)) % mod;
+			NElr.first = (i + (int)pow(2, k - 1) - 1) % mod;
+			NElr.second = (j + (int)pow(2, k - 1) + (int)pow(2, k - 1) - 1) % mod;
+			//PNG partNEimg = cropImage(*im, NEul, NElr, pow(2,k));
 			//Crop the image for the NW part
-			NWul.first = i + pow(2, k - 1);
-			NWul.second = j + pow(2, k - 1);
-			NWlr.first = i + pow(2, k - 1) + pow(2, k - 1) - 1;
-			NWlr.second = j + pow(2, k - 1) + pow(2, k - 1) - 1;
-			PNG partNWimg = cropImage(*im, NWul, NWlr, pow(2,k));
+			NWul.first = (i + (int)pow(2, k - 1)) % mod;
+			NWul.second = (j + (int)pow(2, k - 1)) % mod;
+			NWlr.first = (i + (int)pow(2, k - 1) + (int)pow(2, k - 1) - 1) % mod;
+			NWlr.second = (j + (int)pow(2, k - 1) + (int)pow(2, k - 1) - 1) % mod;
+			//PNG partNWimg = cropImage(*im, NWul, NWlr, pow(2,k));
 			//Get the stats for all of the cropped images
-			stats SE(partSEimg);
+			//stats SE(partSEimg);
 			printf("Stats for SE created\n");
-			stats SW(partSWimg);
+			//stats SW(partSWimg);
 			printf("Stats for SW created\n");
-			stats NE(partNEimg);
+			//stats NE(partNEimg);
 			printf("Stats for NE created\n");
-			stats NW(partNWimg);
+			//stats NW(partNWimg);
 			printf("Stats for NW created\n");
 			//Set the origin and lr corner for all these same sized square images
-			pair<int,int> origin;
-			origin.first = 0;
-			origin.second = 0;
-			pair<int, int> end_corner;
-			end_corner.first = pow(2, k - 1) - 1;
-			end_corner.second = pow(2, k - 1) - 1;
+			//pair<int,int> origin;
+			//origin.first = 0;
+			//origin.second = 0;
+			//pair<int, int> end_corner;
+			//end_corner.first = pow(2, k - 1) - 1;
+			//end_corner.second = pow(2, k - 1) - 1;
 			//Get the entropy of the 4 newly cropped images
+
 			printf("Before entropy");
-			double SE_entropy = SE.entropy(origin, end_corner);
+			double SE_entropy = image.entropy(SEul, SElr);
 			printf("SE entropy: %d\n", SE_entropy);
-			double SW_entropy = SW.entropy(origin, end_corner);
+			double SW_entropy = image.entropy(SWul, SWlr);
 			printf("SW entropy: %d\n", SW_entropy);
-			double NE_entropy = NE.entropy(origin, end_corner);
+			double NE_entropy = image.entropy(NEul, NElr);
 			printf("NE entropy: %d\n", NE_entropy);
-			double NW_entropy = NW.entropy(origin, end_corner);
+			double NW_entropy = image.entropy(NWul, NWlr);
 			printf("NW entropy: %d\n", NW_entropy);
 			// Calcuate the average entopy of these 4 images
 			average_entropy = (SE_entropy + SW_entropy + NE_entropy + NW_entropy) / 4;
@@ -175,6 +179,8 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 				min_entropy = average_entropy;
 				optimal_point.first = SEul.first;
 				optimal_point.second = SEul.second;
+				printf("UPDATED OptimalX: %i, OptimalY %i\n", optimal_point.first, optimal_point.second);
+
 			}
 		}
 	}
@@ -194,13 +200,8 @@ PNG toqutree::render(){
 
 /* oops, i left the implementation of this one in the file! */
 void toqutree::prune(double tol){
-<<<<<<< Updated upstream
-
-	prune(root,tol);
-=======
 	
 	// prune(root,tol);
->>>>>>> Stashed changes
 
 }
 

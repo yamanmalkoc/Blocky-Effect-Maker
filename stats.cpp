@@ -10,9 +10,6 @@ stats::stats(PNG & im){
     // This is done to simplify distance computation. We calculate
     // the cumulative sums for X and Y separately, and then combine
     // them when we are doing color difference computation.
-<<<<<<< Updated upstream
-/* your code here */
-=======
     
     sums(im);
 }
@@ -86,7 +83,6 @@ vector<int> stats::histMaker(PNG & im, int x, int y){
         }
     return ret;
 }
->>>>>>> Stashed changes
 
 }
 
@@ -108,7 +104,7 @@ HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
     // Y values using the arctan function. You should research the 
     // details of this. Finally, please set the average alpha channel to 
     // 1.0.
-    HSLAPixel * pixel = getPixel(unsigned int x, unsigned int y);
+    //HSLAPixel * pixel = getPixel(unsigned int x, unsigned int y);
 
 /* your code here */
 }
