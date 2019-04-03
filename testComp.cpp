@@ -206,12 +206,6 @@ TEST_CASE("stats::bryson wrapper2","[weight=1][part=stats]"){
         }
     }
 
-    // for(int x = 0; x < 8; x ++){
-    //     for(int y = 0; y < 8; y++){
-    //         HSLAPixel * p = data.getPixel(x,y);
-    //         cout<<x<<","<<y<<" h: "<<p->h<<endl;
-    //     }
-    // }
     stats s(data);
     pair<int,int> ul(7,7);
     pair<int,int> lr(2,2);

@@ -106,6 +106,8 @@ public:
 
     HSLAPixel getTotalNoWrap(pair<int,int> ul, pair<int,int> lr);
 
+    HSLAPixel getAvg2(pair<int,int> ul, pair<int,int> lr);
+
 };
 
 #endif
