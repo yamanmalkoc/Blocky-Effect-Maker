@@ -72,7 +72,28 @@ PNG toqutree::render(){
 /* oops, i left the implementation of this one in the file! */
 void toqutree::prune(double tol){
 
-	// prune(root,tol);
+	prune(root,tol);
+
+}
+
+
+/* oops, i left the implementation of this one in the file! */
+void toqutree::prune(Node *root, double tol){
+	//base case
+	if(root->NE == NULL) 
+		return; 
+
+	//recursive case
+	if(validToPrune(root,tol)){
+		root->NE = NULL;
+		root->NW = NULL;
+		root->SE = NULL;
+		root->SW = NULL;
+	}
+
+}
+
+int toqutree::validToPrune(Node *root, double tol){
 
 }
 

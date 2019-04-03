@@ -107,7 +107,6 @@ pair<int,int> stats::getDim(pair<int,int> ul, pair<int,int> lr){
 
     //Wrapping from the bottom corner, splits into four rects
     if(lr.first < ul.first && lr.second < ul.second){
-        cout<<"ajhhh"<<endl;
         xDiff =  ul.first - lr.first;
         yDiff =  ul.second - lr.second; 
         ret.first = --xDiff;
@@ -150,7 +149,7 @@ int stats::findBin(PNG & im, int x, int y){
 HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
       //Normal scenario with no wrapping
     if(ul.first <= lr.first && ul.second <= lr.second)
-        return getAvgNoWrap(ul,lr);
+        return getTotalNoWrap(ul,lr);
     
     pair<int,int> dims = getDim(ul,lr); 
     int width = ul.first + dims.first - (lr.first + 1);
@@ -160,16 +159,16 @@ HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
         pair<int,int> lr1;
         lr1.first = width - 1; 
         lr1.second = height - 1; 
-        HSLAPixel rect1 = getAvgNoWrap(ul,lr1);
+        HSLAPixel rect1 = getTotalNoWrap(ul,lr1);
         pair<int,int> ul2(lr.first,ul.second);
         pair<int,int> lr2(lr.first,height - 1);
-        HSLAPixel rect2 = getAvgNoWrap(ul2,lr2);
+        HSLAPixel rect2 = getTotalNoWrap(ul2,lr2);
         pair<int,int> ul3(ul.first,lr.second);
         pair<int,int> lr3(width - 1, lr.second);
-        HSLAPixel rect3 = getAvgNoWrap(ul3,lr3);
+        HSLAPixel rect3 = getTotalNoWrap(ul3,lr3);
         pair<int,int> zero(0,0); 
-        HSLAPixel rect4 = getAvgNoWrap(zero,lr);
-        return merge(rect1,rect2,rect3,rect4,rectArea(ul,lr)); 
+        HSLAPixel rect4 = getTotalNoWrap(zero,lr);
+        return merge(rect1,rect2,rect3,rect4); 
     }
         
     //the x of the upperleft is larger than that of Lower right
@@ -178,12 +177,12 @@ HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
         pair<int,int> lr1;
         lr1.first = width - 1; 
         lr1.second = lr.second; 
-        HSLAPixel rect1 = getAvgNoWrap(ul,lr1); 
+        HSLAPixel rect1 = getTotalNoWrap(ul,lr1); 
         pair<int,int> ul2;
         ul2.first = lr.first;
         ul2.second = ul.second; 
-        HSLAPixel rect2 = getAvgNoWrap(ul2,lr);
-        return merge(rect1, rect2,rectArea(ul,lr)); 
+        HSLAPixel rect2 = getTotalNoWrap(ul2,lr);
+        return merge(rect1, rect2); 
     }
         
     //the y of the upperleft is larger than that of Lower right
@@ -191,19 +190,18 @@ HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
         pair<int,int> lr1;
         lr1.first = lr.first; 
         lr1.second = height - 1;
-        HSLAPixel rect1 = getAvgNoWrap(ul,lr1); 
+        HSLAPixel rect1 = getTotalNoWrap(ul,lr1); 
         pair<int,int> ul2;
         ul2.first = ul.first;
         ul2.second = lr.second; 
-        HSLAPixel rect2 = getAvgNoWrap(ul2,lr);
-        return merge(rect1, rect2, rectArea(ul,lr)); 
+        HSLAPixel rect2 = getTotalNoWrap(ul2,lr);
+        return merge(rect1, rect2); 
     }
 }
 
-HSLAPixel stats::getAvgNoWrap(pair<int,int> ul, pair<int,int> lr){
+HSLAPixel stats::getTotalNoWrap(pair<int,int> ul, pair<int,int> lr){
     long area = rectArea(ul,lr); 
     HSLAPixel ret(0.0, 0.0, 0.0, 1.0);
-    // printVector(this->sumSat);
     //average sat 
     double totalSat;
     double totalLum;
@@ -334,19 +332,21 @@ vector<int> stats::merge(vector<int> v1, vector<int> v2, vector<int> v3, vector<
         return ret; 
 }
 
-HSLAPixel stats::merge(HSLAPixel p1, HSLAPixel p2, long area){
-      HSLAPixel ret; 
-    // for(int i = 0; i < v1.size(); i++){
-    //     ret[i] = v1[i] + v2[i]; 
-    // }
+HSLAPixel stats::merge(HSLAPixel p1, HSLAPixel p2){
+    HSLAPixel ret; 
+    ret.h = p1.h + p2.h;
+    ret.s = p1.s + p2.s;
+    ret.l = p1.l + p2.l; 
+    ret.a = 1.0; 
     return ret; 
 }
 
-HSLAPixel stats::merge(HSLAPixel p1, HSLAPixel p2, HSLAPixel p3, HSLAPixel p4, long area){
+HSLAPixel stats::merge(HSLAPixel p1, HSLAPixel p2, HSLAPixel p3, HSLAPixel p4){
         HSLAPixel ret; 
-        // for(int i = 0; i < v1.size(); i++){
-        //     ret[i] = v1[i] + v2[i] + v3[i] + v4[i]; 
-        // }
+        ret.h = p1.h + p2.h + p3.h + p4.h;
+        ret.s = p1.s + p2.s + p3.s + p4.s;
+        ret.l = p1.l + p2.l + p3.l + p4.l; 
+        ret.a = 1.0; 
         return ret; 
 }
 
