@@ -64,6 +64,166 @@ TEST_CASE("stats::basic entropy","[weight=1][part=stats]"){
     REQUIRE(result == 2);
 }
 
+TEST_CASE("stats::bryson wrapper","[weight=1][part=stats]"){
+    PNG data; data.resize(8,8);
+    for (int i = 0; i < 8; i ++){
+        for (int j = 0; j < 8; j++){
+            if(i == 0 || i == 1 || i == 6 || i == 7){
+                if(j == 0 || j == 1 || j == 6 || j == 7){
+                    HSLAPixel * p = data.getPixel(i,j);
+                    p->h = 35.0;
+                    p->s = 1.0;
+                    p->l = 0.5;
+                    p->a = 1.0;
+                }
+            }else{
+            HSLAPixel * p = data.getPixel(i,j);
+            p->h = 0.0;
+            p->s = 0.0;
+            p->l = 0.0;
+            p->a = 1.0;
+        }
+        }
+    }
+    stats s(data);
+    pair<int,int> ul(6,6);
+    pair<int,int> lr(1,1);
+    vector<int> result = s.getDistn(ul,lr);
+    vector<int> expected(36); 
+    expected[3] = 16;  
+
+    REQUIRE(result == expected);
+}
+
+TEST_CASE("stats::bryson wrapper x >","[weight=1][part=stats]"){
+    PNG data; data.resize(8,8);
+    for (int i = 0; i < 8; i ++){
+        for (int j = 0; j < 8; j++){
+            if(i == 0 || i == 1 || i == 2 || i == 7){
+                if(j == 2 || j == 3 || j == 4 || j == 5){
+                    HSLAPixel * p = data.getPixel(i,j);
+                    p->h = 35.0;
+                    p->s = 1.0;
+                    p->l = 0.5;
+                    p->a = 1.0;
+                }
+            }else{
+            HSLAPixel * p = data.getPixel(i,j);
+            p->h = 0.0;
+            p->s = 0.0;
+            p->l = 0.0;
+            p->a = 1.0;
+        }
+        }
+    }
+    stats s(data);
+    pair<int,int> ul(7,2);
+    pair<int,int> lr(2,5);
+    vector<int> result = s.getDistn(ul,lr);
+    vector<int> expected(36); 
+    expected[3] = 16;  
+
+    REQUIRE(result == expected);
+}
+
+TEST_CASE("stats::bryson wrapper2 x >","[weight=1][part=stats]"){
+    PNG data; data.resize(8,8);
+    for (int i = 0; i < 8; i ++){
+        for (int j = 0; j < 8; j++){
+            if(i == 0 || i == 5 || i == 6 || i == 7){
+                if(j == 2 || j == 3 || j == 4 || j == 5){
+                    HSLAPixel * p = data.getPixel(i,j);
+                    p->h = 35.0;
+                    p->s = 1.0;
+                    p->l = 0.5;
+                    p->a = 1.0;
+                }
+            }else{
+            HSLAPixel * p = data.getPixel(i,j);
+            p->h = 0.0;
+            p->s = 0.0;
+            p->l = 0.0;
+            p->a = 1.0;
+        }
+        }
+    }
+    stats s(data);
+    pair<int,int> ul(5,2);
+    pair<int,int> lr(0,5);
+    vector<int> result = s.getDistn(ul,lr);
+    vector<int> expected(36); 
+    expected[3] = 16;  
+
+    REQUIRE(result == expected);
+}
+
+TEST_CASE("stats::bryson wrapper y >","[weight=1][part=stats]"){
+    PNG data; data.resize(8,8);
+    for (int i = 0; i < 8; i ++){
+        for (int j = 0; j < 8; j++){
+            if(i == 2 || i == 3 || i == 4 || i == 5){
+                if(j == 0 || j == 1 || j == 2 || j == 7){
+                    HSLAPixel * p = data.getPixel(i,j);
+                    p->h = 35.0;
+                    p->s = 1.0;
+                    p->l = 0.5;
+                    p->a = 1.0;
+                }
+            }else{
+            HSLAPixel * p = data.getPixel(i,j);
+            p->h = 0.0;
+            p->s = 0.0;
+            p->l = 0.0;
+            p->a = 1.0;
+        }
+        }
+    }
+    stats s(data);
+    pair<int,int> ul(2,7);
+    pair<int,int> lr(5,2);
+    vector<int> result = s.getDistn(ul,lr);
+    vector<int> expected(36); 
+    expected[3] = 16;  
+
+    REQUIRE(result == expected);
+}
+
+TEST_CASE("stats::bryson wrapper2","[weight=1][part=stats]"){
+    PNG data; data.resize(8,8);
+    for (int i = 0; i < 8; i ++){
+        for (int j = 0; j < 8; j++){
+            if(((i >= 0 && i < 3) || i == 7) && ((j >= 0 && j < 3) || j == 7)){
+                    HSLAPixel * p = data.getPixel(i,j);
+                    p->h = 35.0;
+                    p->s = 1.0;
+                    p->l = 0.5;
+                    p->a = 1.0;
+            }else{
+            HSLAPixel * p = data.getPixel(i,j);
+            p->h = 0.0;
+            p->s = 0.0;
+            p->l = 0.0;
+            p->a = 1.0;
+        }
+        }
+    }
+
+    // for(int x = 0; x < 8; x ++){
+    //     for(int y = 0; y < 8; y++){
+    //         HSLAPixel * p = data.getPixel(x,y);
+    //         cout<<x<<","<<y<<" h: "<<p->h<<endl;
+    //     }
+    // }
+    stats s(data);
+    pair<int,int> ul(7,7);
+    pair<int,int> lr(2,2);
+    vector<int> result = s.getDistn(ul,lr);
+    vector<int> expected(36); 
+    expected[3] = 16;  
+
+    REQUIRE(result == expected);
+}
+
 TEST_CASE("toqutree::basic ctor render","[weight=1][part=toqutree]"){
     PNG img;
     img.readFromFile("images/stanleySquare.png");

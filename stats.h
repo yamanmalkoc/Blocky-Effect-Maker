@@ -81,7 +81,7 @@ public:
     /*
     Helper function to help debug. 
     */
-    void printVector( vector<vector<double>> ret);
+    void printVector( vector<int> ret);
 
     /*
     Helper Function to initialize the histogram private variable. 
