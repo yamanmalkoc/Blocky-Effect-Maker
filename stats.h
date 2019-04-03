@@ -79,14 +79,6 @@ public:
     double entropy(vector<int> & d ,int area);
 
     /*
-    Helper method to initialize private structures in this class. 
-    @Params:
-    im - the image to use
-    cComponent - int between 0 and 3 which indicates which field we are summing.
-    */
-    void sums(PNG & im);
-
-    /*
     Helper function to help debug. 
     */
     void printVector( vector<vector<double>> ret);
@@ -103,6 +95,11 @@ public:
     pair<int,int> getDim(pair<int,int> ul, pair<int,int> lr);
 
     vector<int> getDistn(pair<int,int> ul, pair<int,int> lr);
+
+    vector<int> merge(vector<int> v1, vector<int> v2);
+
+    vector<int> merge(vector<int> v1, vector<int> v2, vector<int> v3, vector<int> v4);
+
 };
 
 #endif

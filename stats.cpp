@@ -10,11 +10,6 @@ stats::stats(PNG & im){
     // This is done to simplify distance computation. We calculate
     // the cumulative sums for X and Y separately, and then combine
     // them when we are doing color difference computation.
-    
-    sums(im);
-}
-
-void stats::sums(PNG & im){
     vector<vector<double>> sum(im.width(), vector<double>(0));
     vector<vector<double>> lum(im.width(), vector<double>(0));
     vector<vector<double>> hX(im.width(), vector<double>(0));
@@ -64,7 +59,6 @@ void stats::sums(PNG & im){
             this->hist[x][y] = histMaker(im,x,y);
         }   
     } 
-    // print,Vector(this->sumSat);
 }
 
 vector<int> stats::histMaker(PNG & im, int x, int y){
@@ -101,6 +95,57 @@ long stats::rectArea(pair<int,int> ul, pair<int,int> lr){
     pair<int,int> dims = getDim(ul,lr);
     return dims.first*dims.second;
 }
+
+
+
+pair<int,int> stats::getDim(pair<int,int> ul, pair<int,int> lr){
+    pair<int,int> ret; 
+    long xDiff = 0;
+    long yDiff = 0;
+    //Normal scenario with no wrapping
+    if(ul.first < lr.first && ul.second < lr.second)
+        xDiff = lr.first - ul.first;
+        yDiff = lr.second - ul.second; 
+        ret.first = ++xDiff;
+        ret.second = ++yDiff;
+        return ret;  
+
+    //Wrapping from the bottom corner, splits into four rects
+    if(lr.first < ul.first && lr.second < ul.second)
+        xDiff =  ul.first - lr.first;
+        yDiff =  ul.second - lr.second; 
+        ret.first = --xDiff;
+        ret.second = --yDiff;
+        return ret;  
+    //the x of the upperleft is larger than that of Lower right
+    if(ul.first > lr.first)
+        xDiff =  ul.first - lr.first;
+        yDiff = lr.second - ul.second;
+        ret.first = --xDiff;
+        ret.second = ++yDiff;
+        return ret; 
+
+    //the y of the upperleft is larger than that of Lower right
+    if(ul.second > lr.second)
+        xDiff = lr.second - ul.second;
+        yDiff = ul.first - lr.first;
+        ret.first = ++xDiff;
+        ret.second = --yDiff;
+        return ret; 
+}
+
+
+int stats::findBin(PNG & im, int x, int y){
+    HSLAPixel * p = im.getPixel(x,y);
+    double h = p->h; 
+    for(double i = 0; i < 36; i++){
+        if(i*10 <= h  && h < (i+1)*10){
+            return i; 
+        }
+    }
+    return -1;
+}
+
 
 //Assumes that the ul corner is always (0,0); 
 HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
@@ -163,63 +208,73 @@ vector<int> stats::getDistn(pair<int,int> ul, pair<int,int> lr){
     //Normal scenario with no wrapping
     if(ul.first < lr.first && ul.second < lr.second)
         return buildHist(ul,lr);
-   
-    
+
+    pair<int,int> dims = getDim(ul,lr); 
+    int width = ul.first + dims.first - (lr.first + 1);
+    int height = ul.second + dims.second - (lr.second + 1);
     //Wrapping from the bottom corner, splits into four rects
     if(lr.first < ul.first && lr.second < ul.second){
-
+        pair<int,int> lr1;
+        lr1.first = width - 1; 
+        lr1.second = height - 1; 
+        vector<int> rect1 = buildHist(ul,lr1);
+        pair<int,int> ul2(lr.first,ul.second);
+        pair<int,int> lr2(lr.first,height - 1);
+        vector<int> rect2 = buildHist(ul2,lr2);
+        pair<int,int> ul3(ul.first,lr.second);
+        pair<int,int> lr3(width - 1, lr.second);
+        vector<int> rect3 = buildHist(ul3,lr3);
+        pair<int,int> zero(0,0); 
+        vector<int> rect4 = buildHist(zero,lr);
+        return merge(rect1,rect2,rect3,rect4); 
     }
-
-
-}
-
-pair<int,int> stats::getDim(pair<int,int> ul, pair<int,int> lr){
-    pair<int,int> ret; 
-    long xDiff = 0;
-    long yDiff = 0;
-    //Normal scenario with no wrapping
-    if(ul.first < lr.first && ul.second < lr.second)
-        xDiff = lr.first - ul.first;
-        yDiff = lr.second - ul.second; 
-        ret.first = ++xDiff;
-        ret.second = ++yDiff;
-        return ret;  
-
-    //Wrapping from the bottom corner, splits into four rects
-    if(lr.first < ul.first && lr.second < ul.second)
-        xDiff =  ul.first - lr.first;
-        yDiff =  ul.second - lr.second; 
-        ret.first = --xDiff;
-        ret.second = --yDiff;
-        return ret;  
+        
     //the x of the upperleft is larger than that of Lower right
-    if(ul.first > lr.first)
-        xDiff =  ul.first - lr.first;
-        yDiff = lr.second - ul.second;
-        ret.first = --xDiff;
-        ret.second = ++yDiff;
-        return ret; 
-
-    //the y of the upperleft is larger than that of Lower right
-    if(ul.second > lr.second)
-        xDiff = lr.second - ul.second;
-        yDiff = ul.first - lr.first;
-        ret.first = ++xDiff;
-        ret.second = --yDiff;
-        return ret; 
-}
-
-
-int stats::findBin(PNG & im, int x, int y){
-    HSLAPixel * p = im.getPixel(x,y);
-    double h = p->h; 
-    for(double i = 0; i < 36; i++){
-        if(i*10 <= h  && h < (i+1)*10){
-            return i; 
-        }
+    if(ul.first > lr.first){
+        //create two rectangles to combind to get the distribution
+        pair<int,int> lr1;
+        lr1.first = width - 1; 
+        lr1.second = lr.second; 
+        vector<int> rect1 = buildHist(ul,lr1); 
+        pair<int,int> ul2;
+        ul2.first = lr.first;
+        ul2.second = ul.second; 
+        vector<int> rect2 = buildHist(ul2,lr);
+        return merge(rect1, rect2); 
     }
-    return -1;
+        
+    //the y of the upperleft is larger than that of Lower right
+    if(ul.second > lr.second){
+        pair<int,int> lr1;
+        lr1.first = lr.first; 
+        lr1.second = height - 1;
+        vector<int> rect1 = buildHist(ul,lr1); 
+        pair<int,int> ul2;
+        ul2.first = ul.first;
+        ul2.second = lr.second; 
+        vector<int> rect2 = buildHist(ul2,lr);
+        return merge(rect1, rect2); 
+    }
 }
+
+vector<int> stats::merge(vector<int> v1, vector<int> v2){
+    vector<int> ret(v1.size()); 
+    for(int i = 0; i < v1.size(); i++){
+        ret[i] = v1[i] + v2[i]; 
+    }
+    return ret; 
+}
+
+vector<int> stats::merge(vector<int> v1, vector<int> v2, vector<int> v3, vector<int> v4){
+    vector<int> ret(v1.size()); 
+        for(int i = 0; i < v1.size(); i++){
+            ret[i] = v1[i] + v2[i] + v3[i] + v4[i]; 
+        }
+        return ret; 
+}
+
+
+
 
 // takes a distribution and returns entropy
 // partially implemented so as to avoid rounding issues.
@@ -238,7 +293,7 @@ double stats::entropy(vector<int> & distn,int area){
 double stats::entropy(pair<int,int> ul, pair<int,int> lr){
 
     int area = rectArea(ul,lr);
-    vector<int> hist = buildHist(ul,lr);
+    vector<int> hist = getDistn(ul,lr);
     return entropy(hist, area);
 
 }
