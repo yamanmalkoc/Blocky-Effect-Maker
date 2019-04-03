@@ -143,47 +143,15 @@ int stats::findBin(PNG & im, int x, int y){
     }
     return -1;
 }
-HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
-    long area = rectArea(ul,lr); 
-    HSLAPixel ret(0.0, 0.0, 0.0, 1.0);
-    //average sat 
-    double totalSat;
-    double totalLum;
-    double totalHueX;
-    double totalHueY;
 
-    if(ul.first == 0 && ul.second == 0){
-        totalSat = this->sumSat[lr.first][lr.second];
-        totalLum = this->sumLum[lr.first][lr.second];
-        totalHueX = this->sumHueX[lr.first][lr.second];
-        totalHueY = this->sumHueY[lr.first][lr.second]; 
-    }else if(ul.first == 0){
-        totalSat = this->sumSat[lr.first][lr.second] - this->sumSat[lr.first][ul.second - 1]; 
-        totalLum = this->sumLum[lr.first][lr.second] - this->sumLum[lr.first][ul.second - 1];
-        totalHueX = this->sumHueX[lr.first][lr.second] - this->sumHueX[lr.first][ul.second - 1];
-        totalHueY = this->sumHueY[lr.first][lr.second] - this->sumHueY[lr.first][ul.second - 1]; 
-    }else if(ul.second == 0){
-        totalSat = this->sumSat[lr.first][lr.second] - this->sumSat[ul.first - 1][lr.second];
-        totalLum = this->sumLum[lr.first][lr.second] - this->sumLum[ul.first - 1][lr.second];
-        totalHueX = this->sumHueX[lr.first][lr.second] - this->sumHueX[ul.first - 1][lr.second];
-        totalHueY = this->sumHueY[lr.first][lr.second] - this->sumHueY[ul.first - 1][lr.second];
-    }else{
-        totalSat = this->sumSat[lr.first][lr.second] - this->sumSat[lr.first][ul.second -1] - this->sumSat[ul.first - 1][lr.second] + this->sumSat[ul.first - 1][ul.second - 1];
-        totalLum = this->sumLum[lr.first][lr.second] - this->sumLum[lr.first][ul.second -1] - this->sumLum[ul.first - 1][lr.second] + this->sumLum[ul.first - 1][ul.second - 1];
-        totalHueX = this->sumHueX[lr.first][lr.second] - this->sumHueX[lr.first][ul.second -1] - this->sumHueX[ul.first - 1][lr.second] + this->sumHueX[ul.first - 1][ul.second - 1];
-        totalHueY = this->sumHueY[lr.first][lr.second] - this->sumHueY[lr.first][ul.second -1] - this->sumHueY[ul.first - 1][lr.second] + this->sumHueY[ul.first - 1][ul.second - 1]; 
-    }
-    ret.s = totalSat / (double)area;
-    ret.l = totalLum / (double)area;
-    ret.h = atan2(totalHueY, totalHueX) * 180 / PI;
-    return ret;
-}
 
 //Assumes that the ul corner is always (0,0); 
-HSLAPixel stats::getAvg2(pair<int,int> ul, pair<int,int> lr){
+HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
       //Normal scenario with no wrapping
-    if(ul.first <= lr.first && ul.second <= lr.second)
-        return getTotalNoWrap(ul,lr);
+    if(ul.first <= lr.first && ul.second <= lr.second){
+        HSLAPixel ret = getTotalNoWrap(ul,lr);
+        return ret;
+    }
     
     pair<int,int> dims = getDim(ul,lr); 
     int width = ul.first + dims.first - (lr.first + 1);
@@ -265,6 +233,8 @@ HSLAPixel stats::getTotalNoWrap(pair<int,int> ul, pair<int,int> lr){
     }
     ret.s = totalSat / (double)area;
     ret.l = totalLum / (double)area;
+    double avgHueX = totalHueX / (double)area; 
+    double avgHueY = totalHueY / (double)area; 
     ret.h = atan2(totalHueY, totalHueX) * 180 / PI;
     return ret;
 }
