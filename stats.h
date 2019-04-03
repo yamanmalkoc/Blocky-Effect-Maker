@@ -100,6 +100,12 @@ public:
 
     vector<int> merge(vector<int> v1, vector<int> v2, vector<int> v3, vector<int> v4);
 
+    HSLAPixel merge(HSLAPixel p1, HSLAPixel p2, long area);
+
+    HSLAPixel merge(HSLAPixel p1, HSLAPixel p2, HSLAPixel p3, HSLAPixel p4, long area);
+
+    HSLAPixel getAvgNoWrap(pair<int,int> ul, pair<int,int> lr);
+
 };
 
 #endif
