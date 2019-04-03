@@ -101,7 +101,7 @@ pair<int,int> stats::getDim(pair<int,int> ul, pair<int,int> lr){
     long xDiff = 0;
     long yDiff = 0;
     //Normal scenario with no wrapping
-    if(ul.first < lr.first && ul.second < lr.second)
+    if(ul.first <= lr.first && ul.second <= lr.second)
         xDiff = lr.first - ul.first;
         yDiff = lr.second - ul.second; 
         ret.first = ++xDiff;
