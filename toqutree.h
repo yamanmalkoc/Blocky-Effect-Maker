@@ -1,4 +1,4 @@
-
+ 
 /**
  *
  * toqutree (pa3)
@@ -153,6 +153,10 @@ public:
    * You may want a recursive helper function for this one.
     */
    void prune(double tol);
+
+   void prune(Node *root, double tol);
+
+   int validToPrune(Node *root, double tol);
 
     /* returns the number of nodes in the current toqutree. primarily used
      * for debugging and testing.

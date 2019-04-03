@@ -77,6 +77,35 @@ public:
      * pixels in bin i, and the sum is taken over all the bins. 
      * bins holding no pixels should not be included in the sum. */
     double entropy(vector<int> & d ,int area);
+
+    /*
+    Helper function to help debug. 
+    */
+    void printVector( vector<int> ret);
+
+    /*
+    Helper Function to initialize the histogram private variable. 
+    */
+    vector<vector<vector<int>>> initHist(PNG & im);
+
+    int findBin(PNG & im,int x,int y);
+
+    vector<int> histMaker(PNG & im, int x, int y);
+
+    pair<int,int> getDim(pair<int,int> ul, pair<int,int> lr);
+
+    vector<int> getDistn(pair<int,int> ul, pair<int,int> lr);
+
+    vector<int> merge(vector<int> v1, vector<int> v2);
+
+    vector<int> merge(vector<int> v1, vector<int> v2, vector<int> v3, vector<int> v4);
+
+    HSLAPixel merge(HSLAPixel p1, HSLAPixel p2);
+
+    HSLAPixel merge(HSLAPixel p1, HSLAPixel p2, HSLAPixel p3, HSLAPixel p4);
+
+    HSLAPixel getTotalNoWrap(pair<int,int> ul, pair<int,int> lr);
+
 };
 
 #endif
