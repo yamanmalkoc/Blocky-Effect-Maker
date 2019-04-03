@@ -146,7 +146,7 @@ public:
 
    void prune(Node *root, double tol);
 
-   int validToPrune(Node *root, double tol);
+   int validToPrune(Node *root, double tol, HSLAPixel avg);
 
     /* returns the number of nodes in the current toqutree. primarily used
      * for debugging and testing.

@@ -124,8 +124,8 @@ pair<int,int> stats::getDim(pair<int,int> ul, pair<int,int> lr){
 
     //the y of the upperleft is larger than that of Lower right
     if(ul.second > lr.second){
-        xDiff = lr.second - ul.second;
-        yDiff = ul.first - lr.first;
+        xDiff = lr.first - ul.first;
+        yDiff = ul.second - lr.second;
         ret.first = ++xDiff;
         ret.second = --yDiff;
         return ret; 
@@ -239,8 +239,8 @@ HSLAPixel stats::getTotalNoWrap(pair<int,int> ul, pair<int,int> lr){
 vector<int> stats::buildHist(pair<int,int> ul, pair<int,int> lr){ 
     if(ul.first == 0 && ul.second == 0)
         return this->hist[lr.first][lr.second];
-    cout<<"ul: "<<ul.first<<","<<ul.second<<endl;
-    cout<<"lr: "<<lr.first<<","<<lr.second<<endl;
+    // cout<<"ul: "<<ul.first<<","<<ul.second<<endl;
+    // cout<<"lr: "<<lr.first<<","<<lr.second<<endl;
     vector<int> ret(36);
     for(int k = 0; k < 36; k++){
         if(ul.first == 0){
@@ -260,7 +260,6 @@ vector<int> stats::getDistn(pair<int,int> ul, pair<int,int> lr){
         return buildHist(ul,lr);
 
     pair<int,int> dims = getDim(ul,lr); 
-    cout<<"dims: "<<dims.first<<","<<dims.second<<endl;
     int width = ul.first + dims.first - (lr.first + 1);
     int height = ul.second + dims.second - (lr.second + 1);
     //Wrapping from the bottom corner, splits into four rects
@@ -269,20 +268,20 @@ vector<int> stats::getDistn(pair<int,int> ul, pair<int,int> lr){
         lr1.first = width - 1; 
         lr1.second = height - 1; 
         vector<int> rect1 = buildHist(ul,lr1);
-        cout<<"rect1: "<<endl;
+        // cout<<"rect1: "<<endl;
         // printVector(rect1);
         pair<int,int> ul2(ul.first,0);
         pair<int,int> lr2(width - 1,(ul.second + dims.second)%height - 1);
-        cout<<"rect2: "<<endl;
+        // cout<<"rect2: "<<endl;
         vector<int> rect2 = buildHist(ul2,lr2);
         //  printVector(rect2);
         pair<int,int> ul3(0,ul.second);
         pair<int,int> lr3((ul.first + dims.first)%width - 1, height - 1);
-        cout<<"rect3: "<<endl;
+        // cout<<"rect3: "<<endl;
         vector<int> rect3 = buildHist(ul3,lr3);
         //  printVector(rect3);
         pair<int,int> zero(0,0); 
-        cout<<"rect4: "<<endl;
+        // cout<<"rect4: "<<endl;
         vector<int> rect4 = buildHist(zero,lr);
         //  printVector(rect4);
         return merge(rect1,rect2,rect3,rect4); 
@@ -307,7 +306,8 @@ vector<int> stats::getDistn(pair<int,int> ul, pair<int,int> lr){
         pair<int,int> lr1;
         lr1.first = lr.first; 
         lr1.second = height - 1;
-        vector<int> rect1 = buildHist(ul,lr1); 
+        // cout<<"ul: "<<ul.first<<","<<ul.second<<" lr1: "<<lr1.first<<","<<lr1.second<<endl;
+        vector<int> rect1 = buildHist(ul,lr1);
         pair<int,int> ul2;
         ul2.first = ul.first;
         ul2.second = 0; 
