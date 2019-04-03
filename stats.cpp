@@ -150,7 +150,6 @@ HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
       //Normal scenario with no wrapping
     if(ul.first <= lr.first && ul.second <= lr.second){
         HSLAPixel ret = getTotalNoWrap(ul,lr);
-        return ret;
     }
     
     pair<int,int> dims = getDim(ul,lr); 
@@ -233,9 +232,7 @@ HSLAPixel stats::getTotalNoWrap(pair<int,int> ul, pair<int,int> lr){
     }
     ret.s = totalSat / (double)area;
     ret.l = totalLum / (double)area;
-    double avgHueX = totalHueX / (double)area; 
-    double avgHueY = totalHueY / (double)area; 
-    ret.h = atan2(avgHueX, avgHueY) * 180 / PI;
+    ret.h = atan2(totalHueY, totalHueX) * 180 / PI;
     return ret;
 }
 
