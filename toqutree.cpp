@@ -76,8 +76,6 @@ void toqutree::prune(double tol){
 
 }
 
-
-/* oops, i left the implementation of this one in the file! */
 void toqutree::prune(Node *root, double tol){
 	//base case
 	if(root->NE == NULL) 
@@ -91,10 +89,26 @@ void toqutree::prune(Node *root, double tol){
 		root->SW = NULL;
 	}
 
+	prune(root->NE, tol, root->NE.avg); 
+	prune(root->NW, tol, root->NW.avg); 
+	prune(root->SE, tol, root->SE.avg); 
+	prune(root->SW, tol, root->SW.avg); 
+
 }
 
-int toqutree::validToPrune(Node *root, double tol){
+int toqutree::validToPrune(Node *root, double tol, HSLAPixel avg){
+	//basecase
+	if(root == NULL) return 1; 
 
+	//recursive case
+	if(validToPrune(root->NE) == 0) return 0;
+	if(validToPrune(root->NW) == 0) return 0;
+	if(validToPrune(root->SE) == 0) return 0;
+	if(validToPrune(root->SW) == 0) return 0;
+	//Check if any pixel is NOT within the tolerance. 
+	if(root->avg.dist(avg) > tol){
+		return 0; 
+	}
 }
 
 /* called by destructor and assignment operator*/
