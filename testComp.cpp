@@ -183,21 +183,19 @@ TEST_CASE("stats::bryson wrapper y >","[weight=1][part=stats]"){
     PNG data; data.resize(8,8);
     for (int i = 0; i < 8; i ++){
         for (int j = 0; j < 8; j++){
-            if(i == 2 || i == 3 || i == 4 || i == 5){
-                if(j == 0 || j == 1 || j == 2 || j == 7){
+            if((i == 2 || i == 3 || i == 4 || i == 5) && (j == 0 || j == 1 || j == 2 || j == 7)){
                     HSLAPixel * p = data.getPixel(i,j);
                     p->h = 35.0;
                     p->s = 1.0;
                     p->l = 0.5;
                     p->a = 1.0;
-                }
             }else{
-            HSLAPixel * p = data.getPixel(i,j);
-            p->h = 0.0;
-            p->s = 0.0;
-            p->l = 0.0;
-            p->a = 1.0;
-        }
+                    HSLAPixel * p = data.getPixel(i,j);
+                    p->h = 0.0;
+                    p->s = 0.0;
+                    p->l = 0.0;
+                    p->a = 1.0; 
+            }
         }
     }
     stats s(data);
@@ -230,12 +228,6 @@ TEST_CASE("stats::bryson wrapper2","[weight=1][part=stats]"){
         }
     }
 
-    // for(int x = 0; x < 8; x ++){
-    //     for(int y = 0; y < 8; y++){
-    //         HSLAPixel * p = data.getPixel(x,y);
-    //         cout<<x<<","<<y<<" h: "<<p->h<<endl;
-    //     }
-    // }
     stats s(data);
     pair<int,int> ul(7,7);
     pair<int,int> lr(2,2);

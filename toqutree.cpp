@@ -211,17 +211,17 @@ void toqutree::prune(Node *root, double tol){
 		return; 
 
 	//recursive case
-	if(validToPrune(root,tol)){
+	if(validToPrune(root,tol,root->avg)){
 		root->NE = NULL;
 		root->NW = NULL;
 		root->SE = NULL;
 		root->SW = NULL;
 	}
 
-	prune(root->NE, tol, root->NE.avg); 
-	prune(root->NW, tol, root->NW.avg); 
-	prune(root->SE, tol, root->SE.avg); 
-	prune(root->SW, tol, root->SW.avg); 
+	prune(root->NE, tol); 
+	prune(root->NW, tol); 
+	prune(root->SE, tol); 
+	prune(root->SW, tol); 
 
 }
 
@@ -230,10 +230,10 @@ int toqutree::validToPrune(Node *root, double tol, HSLAPixel avg){
 	if(root == NULL) return 1; 
 
 	//recursive case
-	if(validToPrune(root->NE) == 0) return 0;
-	if(validToPrune(root->NW) == 0) return 0;
-	if(validToPrune(root->SE) == 0) return 0;
-	if(validToPrune(root->SW) == 0) return 0;
+	if(validToPrune(root->NE, tol, avg) == 0) return 0;
+	if(validToPrune(root->NW, tol, avg) == 0) return 0;
+	if(validToPrune(root->SE, tol, avg) == 0) return 0;
+	if(validToPrune(root->SW, tol, avg) == 0) return 0;
 	//Check if any pixel is NOT within the tolerance. 
 	if(root->avg.dist(avg) > tol){
 		return 0; 
