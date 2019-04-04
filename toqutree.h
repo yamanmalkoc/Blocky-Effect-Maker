@@ -11,6 +11,7 @@
 
 #include <utility>
 #include <cmath>
+#include <queue>
 #include "cs221util/PNG.h"
 #include "cs221util/HSLAPixel.h"
 #include "stats.h"
@@ -81,6 +82,8 @@ public:
     * @param other The toqutree  we are copying.
     */
    toqutree(const toqutree & other);
+
+   void printTree();
 
    /**
     * Overloaded assignment operator for toqutrees. 

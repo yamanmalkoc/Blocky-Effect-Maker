@@ -63,6 +63,61 @@ printf("YOOOOOOOOO");
 	return;
 }
 
+//Prints out the entire tree to be used for debugging purposes
+void toqutree::printTree(){
+	std::queue<Node *> queue;
+	Node * current_node = this->root;
+	queue.push(current_node);
+
+	while(!queue.empty()) {
+		printf("A\n");
+		current_node = queue.front();
+		printf("B\n");
+		queue.pop();
+		printf("C\n");
+		printf("%i\n", current_node->dimension);
+		if(current_node->SE != NULL) {
+			printf("Not Null SE\n");
+			queue.push(current_node->SE);
+			printf("Queue Size: %i\n", queue.size());
+		}
+		if(current_node->SW != NULL) {
+			printf("Not Null SW\n");
+			queue.push(current_node->SW);
+			printf("Queue Size: %i\n", queue.size());
+		}
+		if(current_node->NE != NULL) {
+			printf("Not Null NE\n");
+			queue.push(current_node->NE);
+			printf("Queue Size: %i\n", queue.size());
+		}
+		if(current_node->NW != NULL) {
+			printf("Not Null NW\n");
+			queue.push(current_node->NW);
+			printf("Queue Size: %i\n", queue.size());
+		}
+		// if(queue.size() != 0){
+		// 	if(current_node->dimension != queue.front()->dimension) {
+		// 		printf("\n");
+		// 	}
+		// }
+		
+	}
+	// Node * current_node = this->root;
+	
+	// Node * current_nodeSE = current_node->SE;
+	// Node * current_nodeSW = current_node->SW;
+	// Node * current_nodeNE = current_node->NE;
+	// Node * current_nodeNW = current_node->NW;
+
+	// printf("\nRoot_dim: %i\n", current_node->dimension);
+	// printf("SE: %i   SW: %i  NE:  %i    NW: %i\n", current_nodeSE->dimension, current_nodeSW->dimension, current_nodeNE->dimension, current_nodeNW->dimension);
+
+
+
+
+}
+
 //A functions that returns a cropped part of an original image
 PNG toqutree::cropImage(PNG & img, pair<int,int> ul, pair<int,int> lr, int mod) {
 	//Create a new image to copy and return a part of the input image
@@ -120,13 +175,13 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 		HSLAPixel last_parent_avg = image.getAvg(zero, default_center_lr);
 		Node last_parent(default_center_lr, k, last_parent_avg);
 
-		Node SEleaf(zero, k, *im->getPixel(1,1));
+		Node SEleaf(zero, k - 1, *im->getPixel(1,1));
 		last_parent.SE = &SEleaf;
-		Node SWleaf(zero, k, *im->getPixel(0,1));
+		Node SWleaf(zero, k - 1, *im->getPixel(0,1));
 		last_parent.SW = &SWleaf;
-		Node NEleaf(zero, k, *im->getPixel(1,0));
+		Node NEleaf(zero, k - 1, *im->getPixel(1,0));
 		last_parent.NE = &NEleaf;
-		Node NWleaf(zero, k, *im->getPixel(0,0));
+		Node NWleaf(zero, k - 1, *im->getPixel(0,0));
 		last_parent.NW = &NWleaf;
 
 		SEleaf.SE = NULL;
@@ -240,6 +295,7 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 	optimal_NElr.second = optimal_NEul.second + inner_square_size - 1;
 	optimal_NWlr.first = optimal_NWul.first + inner_square_size - 1;
 	optimal_NWlr.second = optimal_NWul.second + inner_square_size - 1;
+	printf("SEulfirst: %i, SEulsecond: %i\n", optimal_pointul.first, optimal_pointul.second);
 
 	PNG SEimage = cropImage(*im, optimal_pointul, optimal_pointlr, pow(2,k));
 	PNG SWimage = cropImage(*im, optimal_SWul, optimal_SWlr, pow(2,k));
