@@ -114,6 +114,23 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 		Node NWleaf(zero, k, *im->getPixel(0,0));
 		last_parent.NW = &NWleaf;
 
+		SEleaf.SE = NULL;
+		SEleaf.SW = NULL;
+		SEleaf.NE = NULL;
+		SEleaf.NW = NULL;
+		SWleaf.SE = NULL;
+		SWleaf.SW = NULL;
+		SWleaf.NE = NULL;
+		SWleaf.NW = NULL;
+		NEleaf.SE = NULL;
+		NEleaf.SW = NULL;
+		NEleaf.NE = NULL;
+		NEleaf.NW = NULL;
+		NWleaf.SE = NULL;
+		NWleaf.SW = NULL;
+		NWleaf.NE = NULL;
+		NWleaf.NW = NULL;
+
 		return &last_parent;
 	}
 
@@ -190,8 +207,6 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 				optimal_NEul.second = optimal_pointul.second + inner_square_size;
 				optimal_NWul.first = optimal_pointul.first + inner_square_size;
 				optimal_NWul.second = optimal_pointul.second + inner_square_size;
-				printf("UPDATED OptimalX: %i, OptimalY %i\n", optimal_pointul.first, optimal_pointul.second);
-
 			}
 			//printf("I:  %i  J: %i Offset: %i\n", i,j,offset);
 		}
