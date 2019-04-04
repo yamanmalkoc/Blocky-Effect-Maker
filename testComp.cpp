@@ -12,7 +12,6 @@ using namespace std;
 using namespace cs221util;
 
 
-
 TEST_CASE("stats::basic rectArea","[weight=1][part=stats]"){
 
     PNG data; data.resize(2,2);
@@ -256,7 +255,8 @@ TEST_CASE("toqutree::basic copy","[weight=1][part=toqutree]"){
     PNG img;
     img.readFromFile("images/geo.png");
 
-    toqutree t1(img,3);
+    toqutree t1(img,2);
+    t1.printTree();
     toqutree t1copy(t1);
 
     PNG out = t1copy.render();
