@@ -41,8 +41,26 @@ toqutree::toqutree(PNG & imIn, int k){
 }
 
 int toqutree::size() {
-	// root->dimension
+	return traversal(root,0);
 }
+
+int toqutree::traversal(Node *root, int sum){
+	//base case
+	if(root == NULL) 
+		return 1; 
+
+	//recursive case
+	int sumCopy = sum; 
+	sumCopy += traversal(root->NE, sumCopy); 
+	sumCopy += traversal(root->NW, sumCopy); 
+	sumCopy += traversal(root->SE, sumCopy); 
+	sumCopy += traversal(root->SW, sumCopy); 
+
+	return sumCopy;
+	//check the current node
+ 
+}
+
 
 
 toqutree::Node * toqutree::buildTree(PNG * im, int k) {

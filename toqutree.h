@@ -162,6 +162,8 @@ public:
      */
     int size();
 
+    int traversal(Node *root, int sum);
+
    /* =============== end of public PA3 FUNCTIONS =========================*/
 
 private:
