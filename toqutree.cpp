@@ -82,15 +82,21 @@ int toqutree::size() {
 
 int toqutree::traversal(Node *root, int sum){
 	//base case
-	if(root == NULL) 
-		return 1; 
+	if(root == NULL){
+		printf("baseCase\n");
+		return 1;
+	} 
 
 	//recursive case
 	int sumCopy = sum; 
 	sumCopy += traversal(root->NE, sumCopy); 
+	printf("first");
 	sumCopy += traversal(root->NW, sumCopy); 
+	printf("second");
 	sumCopy += traversal(root->SE, sumCopy); 
+	printf("third");
 	sumCopy += traversal(root->SW, sumCopy); 
+	printf("forth");
 
 	return sumCopy;
 	//check the current node
@@ -254,6 +260,53 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 	return &current_node;
 }
 
+
+void toqutree::printNode(Node *node){
+	if(node == NULL){
+		printf("This node is NULL\n"); 
+	}else{
+		printf("This node is Not NULL");
+		if(node->dimension != NULL){
+			printf("Dim: %i\n", node->dimension);
+		}else{
+			printf("Dimension is NULL\n"); 
+		}
+		if(&node->center != NULL){
+			printf("Center: %i, %i\n", node->center.first, node->center.second);
+		}else{
+			printf("Center is NULL\n"); 
+		}
+		if(&node->avg != NULL){
+			printf("Avg: Hue %f, Sat %f, Lum %f\n", node->avg.h, node->avg.s, node->avg.l);
+		}else{
+			printf("Avg is NULL\n"); 
+		}
+		if(node->SE != NULL){
+			printf("SE is not NULL");
+		}else{
+			printf("SE is NULL\n"); 
+		}
+		if(node->SW != NULL){
+			printf("SW is not NULL");
+		}else{
+			printf("SW is NULL\n"); 
+		}
+		if(node->NE != NULL){
+			printf("NE is not NULL");
+		}else{
+			printf("NE is NULL\n"); 
+		}
+		if(node->NW != NULL){
+			printf("NW is not NULL");
+		}else{
+			printf("NW is NULL\n"); 
+		}
+	}
+	printf("\n\n");
+
+}
+
+      
 PNG toqutree::render(){
 
 // My algorithm for this problem included a helper function

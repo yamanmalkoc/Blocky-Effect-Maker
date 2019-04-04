@@ -152,6 +152,9 @@ public:
 
    PNG getNodePNG(Node * n);
 
+   void printNode(Node *node);
+
+
    /*
     *  Prune function trims subtrees as high as possible in the tree.
     *  A subtree is pruned (cleared) if ALL of the subtree's leaves are within 
