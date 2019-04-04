@@ -77,13 +77,31 @@ PNG toqutree::cropImage(PNG & img, pair<int,int> ul, pair<int,int> lr, int mod) 
 }
 
 int toqutree::size() {
-/* your code here */
+	return traversal(root,0);
 }
+
+int toqutree::traversal(Node *root, int sum){
+	//base case
+	if(root == NULL) 
+		return 1; 
+
+	//recursive case
+	int sumCopy = sum; 
+	sumCopy += traversal(root->NE, sumCopy); 
+	sumCopy += traversal(root->NW, sumCopy); 
+	sumCopy += traversal(root->SE, sumCopy); 
+	sumCopy += traversal(root->SW, sumCopy); 
+
+	return sumCopy;
+	//check the current node
+ 
+}
+
 
 
 toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 
-/* your code here */
+/* your code here */ 
 
 // Note that you will want to practice careful memory use
 // In this function. We pass the dynamically allocated image
@@ -222,14 +240,70 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 
 	return &current_node;
 }
-
+   /**
+    * Render returns a PNG image consisting of the pixels
+    * stored in the tree. may be used on pruned trees. Draws
+    * every pixel onto a PNG canvas using the 
+    * average color stored in the node.
+	*/
 PNG toqutree::render(){
-
+	
 // My algorithm for this problem included a helper function
 // that was analogous to Find in a BST, but it navigated the 
 // quadtree, instead.
-
+	return render(root); 
 /* your code here */
+
+}
+
+PNG toqutree::render(Node *root){
+	//base case
+	if(root->NE == NULL) return getNodePNG(root); 
+
+	//recursive case
+	PNG NE = render(root->NE);
+	PNG NW = render(root->NW);
+	PNG SE = render(root->SE);
+	PNG SW = render(root->SW);
+
+	return createImage(NE,NW,SE,SW); 
+}
+
+PNG toqutree::getNodePNG(Node *n){
+	int dim = pow(2,n->dimension);
+	PNG ret(dim,dim); 
+	for(int x = 0; x < dim; x++){
+		for(int y = 0; y < dim; y++){
+			HSLAPixel *p = ret.getPixel(x,y);
+			*p = n->avg; 
+		}
+	}
+	return ret;
+}
+
+PNG toqutree::createImage(PNG NE, PNG NW, PNG SE, PNG SW){
+	//Create an image of the appropriate size
+	//also width and height are the same 
+	int width = NE.width()*2;
+	int height = NE.height()*2; 
+	PNG ret(width,height);
+
+	for(int x = 0; x < width; x++){
+		for(int y = 0; y < height; y++){
+			HSLAPixel * p = ret.getPixel(x,y); 
+			if(x < width/2 && y < height/2){
+				p = NW.getPixel(x, y); 
+			}else if(x >= width/2 && y < height/2){
+				p = NE.getPixel(x - width, y);
+			}else if(x < width/2 && y >= height/2){
+				p = SW.getPixel(x, y - height); 
+			}else if(x >= width/2 && y >= height/2){
+				p = SE.getPixel(x - width, y - height);  
+			}
+		}
+	}
+
+	return ret; 
 
 }
 
@@ -278,13 +352,20 @@ int toqutree::validToPrune(Node *root, double tol, HSLAPixel avg){
 /* called by destructor and assignment operator*/
 void toqutree::clear(Node * & curr){
 /* your code here */
+
 }
 
 /* done */
 /* called by assignment operator and copy constructor */
 toqutree::Node * toqutree::copy(const Node * other) {
-
-/* your code here */
+	pair<int,int> ctr = other->center; 
+	int dim = other->dimension; 
+	HSLAPixel a = other->avg; 
+    Node ret(ctr,dim,a);
+	ret.SE = other->SE;
+	ret.NE = other->NE;
+	ret.SW = other->SW;
+	ret.NW = other->NW;
+    return &ret; 
 }
-
 
