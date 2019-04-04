@@ -55,18 +55,23 @@ printf("YOOOOOOOOO");
 	pair<int,int> optimal_point;
 	optimal_point.first = pow(2, k - 2);
 	optimal_point.second = pow(2, k - 2);
-	printf("OptimalX: %i, OptimalY %i\n", optimal_point.first, optimal_point.second);
-
+	
 	PNG rootImage = cropImage(imIn, ul, lr, pow(2, k));
 	pair<int,int> p(0,0);
 	HSLAPixel pix(0.0,0.0,0.0,0.0);
 
-	Node temp(p,3,pix);
-	root = &temp; 
-	temp = *buildTree(&rootImage, k);
+	// Node temp(p,3,pix);
+	// root = &temp; 
+	// temp = *buildTree(&rootImage, k);
+	this->root = buildTree(&rootImage, k);
 	printf("PRINTING THE ROOT NODE:\n");
-	this->root = &temp;
-	printNode(root);
+	printNode(this->root);
+	//printNode(this->root);
+	// printf("these are the children -----------------------------------------------\n");
+	// printNode(this->root->SE);
+	// printNode(this->root->SW);
+	// printNode(this->root->NE);
+	// printNode(this->root->NW);
 	return;
 }
 
@@ -115,20 +120,20 @@ void toqutree::printTree(){
 	// 	counter++;
 		
 	// }
-	Node * current_node = this->root;
 	
-	Node * current_nodeSE = current_node->SE;
-	Node * current_nodeSW = current_node->SW;
-	Node * current_nodeNE = current_node->NE;
-	Node * current_nodeNW = current_node->NW;
+	
+	// Node * current_nodeSE = this->root->SE;
+	// Node * current_nodeSW = ;
+	// Node * current_nodeNE = ;
+	// Node * current_nodeNW = ;
 
 	//printf("\nRoot_dim: %i\n", current_node->dimension);
 	//printf("SE: %i   SW: %i  NE:  %i    NW: %i\n", current_nodeSE->dimension, current_nodeSW->dimension, current_nodeNE->dimension, current_nodeNW->dimension);
-	printNode(current_node);
-	printNode(current_nodeSE);
-	printNode(current_nodeSW);
-	printNode(current_nodeNE);
-	printNode(current_nodeNW);
+	printNode(this->root);
+	printNode(this->root->SE);
+	printNode(this->root->SW);
+	printNode(this->root->NE);
+	printNode(this->root->NW);
 
 }
 
@@ -186,57 +191,58 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 //ToDoList:
 //the image passed to this function will be a square
 //calculate the average entropy of these 4 blocks
-	stats image(*im);
+	stats* image = new stats(*im);
 	
 	if(k < 2){
 
 		pair<int,int> default_center_lr(1,1);
 		pair<int,int> zero(0,0);
-		HSLAPixel last_parent_avg = image.getAvg(zero, default_center_lr);
-		Node last_parent(default_center_lr, k, last_parent_avg);
+		HSLAPixel last_parent_avg = image->getAvg(zero, default_center_lr);
+		delete image;
+		Node* last_parent = new Node(default_center_lr, k, last_parent_avg);
 
-		Node SEleaf(zero, k - 1, *im->getPixel(1,1));
-		last_parent.SE = &SEleaf;
-		Node SWleaf(zero, k - 1, *im->getPixel(0,1));
-		last_parent.SW = &SWleaf;
-		Node NEleaf(zero, k - 1, *im->getPixel(1,0));
-		last_parent.NE = &NEleaf;
-		Node NWleaf(zero, k - 1, *im->getPixel(0,0));
-		last_parent.NW = &NWleaf;
+		Node* SEleaf = new Node(zero, k - 1, *im->getPixel(1,1));
+		last_parent->SE = SEleaf;
+		Node* SWleaf = new Node(zero, k - 1, *im->getPixel(0,1));
+		last_parent->SW = SWleaf;
+		Node* NEleaf = new Node(zero, k - 1, *im->getPixel(1,0));
+		last_parent->NE = NEleaf;
+		Node* NWleaf = new Node(zero, k - 1, *im->getPixel(0,0));
+		last_parent->NW = NWleaf;
 		printf("\nNew last_parent is created! The info of this last_parent is:\n");
-		printNode(&last_parent);
+		printNode(last_parent);
 
-		SEleaf.SE = NULL;
-		SEleaf.SW = NULL;
-		SEleaf.NE = NULL;
-		SEleaf.NW = NULL;
+		SEleaf->SE = NULL;
+		SEleaf->SW = NULL;
+		SEleaf->NE = NULL;
+		SEleaf->NW = NULL;
 		printf("\nNew leaf is created! The info of SE is:\n");
-		printNode(&SEleaf);
+		printNode(SEleaf);
 
-		SWleaf.SE = NULL;
-		SWleaf.SW = NULL;
-		SWleaf.NE = NULL;
-		SWleaf.NW = NULL;
+		SWleaf->SE = NULL;
+		SWleaf->SW = NULL;
+		SWleaf->NE = NULL;
+		SWleaf->NW = NULL;
 		printf("\nNew leaf is created! The info of NE is:\n");
-		printNode(&NEleaf);
+		printNode(NEleaf);
 
-		NEleaf.SE = NULL;
-		NEleaf.SW = NULL;
-		NEleaf.NE = NULL;
-		NEleaf.NW = NULL;
+		NEleaf->SE = NULL;
+		NEleaf->SW = NULL;
+		NEleaf->NE = NULL;
+		NEleaf->NW = NULL;
 		printf("\nNew leaf is created! The info of SW is:\n");
-		printNode(&SWleaf);
+		printNode(SWleaf);
 
-		NWleaf.SE = NULL;
-		NWleaf.SW = NULL;
-		NWleaf.NE = NULL;
-		NWleaf.NW = NULL;
+		NWleaf->SE = NULL;
+		NWleaf->SW = NULL;
+		NWleaf->NE = NULL;
+		NWleaf->NW = NULL;
 		printf("\nNew leaf is created! The info of NW is:\n");
-		printNode(&NWleaf);
+		printNode(NWleaf);
 
-		Node * retPointer = &last_parent;
+		return last_parent;
 
-		return retPointer;
+		
 	}
 
 	pair<int,int> SEul;
@@ -291,13 +297,13 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 			//PNG partNWimg = cropImage(*im, NWul, NWlr, pow(2,k));
 
 			//printf("Before entropy");
-			double SE_entropy = image.entropy(SEul, SElr);
+			double SE_entropy = image->entropy(SEul, SElr);
 			//printf("SE entropy: %f\n", SE_entropy);
-			double SW_entropy = image.entropy(SWul, SWlr);
+			double SW_entropy = image->entropy(SWul, SWlr);
 			//printf("SW entropy: %f\n", SW_entropy);
-			double NE_entropy = image.entropy(NEul, NElr);
+			double NE_entropy = image->entropy(NEul, NElr);
 			//printf("NE entropy: %f\n", NE_entropy);
-			double NW_entropy = image.entropy(NWul, NWlr);
+			double NW_entropy = image->entropy(NWul, NWlr);
 			//printf("NW entropy: %f\n", NW_entropy);
 			// Calcuate the average entopy of these 4 images
 			average_entropy = (SE_entropy + SW_entropy + NE_entropy + NW_entropy) / 4;
@@ -318,8 +324,9 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 	}
 	pair<int,int> origin(0,0);
 	pair<int,int> right_bottom(im->width() - 1, im->height() - 1);
-	HSLAPixel avg_pixel = image.getAvg(origin, right_bottom);
-	Node current_node(optimal_pointul, k, avg_pixel);
+	HSLAPixel avg_pixel = image->getAvg(origin, right_bottom);
+	delete image;
+	Node* current_node = new Node(optimal_pointul, k, avg_pixel);
 	//printf("Out of the for loop");
 	
 	optimal_pointlr.first = optimal_pointul.first + inner_square_size - 1;
@@ -337,15 +344,23 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 	PNG NEimage = cropImage(*im, optimal_NEul, optimal_NElr, pow(2,k));
 	PNG NWimage = cropImage(*im, optimal_NWul, optimal_NWlr, pow(2,k));
 	//Call the function recursively, ith passing the 4 images that have the minimal entropy
-	current_node.SE = buildTree(&SEimage, k-1);
-	current_node.SW = buildTree(&SWimage, k-1);
-	current_node.NE = buildTree(&NEimage, k-1);
-	current_node.NW = buildTree(&NWimage, k-1);
+	current_node->SE = buildTree(&SEimage, k-1);
+	current_node->SW = buildTree(&SWimage, k-1);
+	current_node->NE = buildTree(&NEimage, k-1);
+	current_node->NW = buildTree(&NWimage, k-1);
 	printf("\nNew node is created! The info of this node is:\n");
-	printNode(&current_node);
+	printNode(current_node);
 
-	Node * this_node = &current_node;
-	return this_node;
+	if(k == 2){
+		printf("have a yolo ------------------------------------------------------------------\n");
+		printNode(current_node->SE);
+		printNode(current_node->SW);
+		printNode(current_node->NE);
+		printNode(current_node->NW);
+	}
+
+	return current_node;
+	// return this_node;
 }
 
 

@@ -256,7 +256,7 @@ TEST_CASE("toqutree::basic copy","[weight=1][part=toqutree]"){
     img.readFromFile("images/geo.png");
 
     toqutree t1(img,2);
-    // t1.printTree();
+    t1.printTree();
     // toqutree t1copy(t1);
 
     // PNG out = t1copy.render();
