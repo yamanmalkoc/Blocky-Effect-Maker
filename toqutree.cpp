@@ -57,11 +57,10 @@ printf("YOOOOOOOOO");
 	optimal_point.second = pow(2, k - 2);
 	printf("OptimalX: %i, OptimalY %i\n", optimal_point.first, optimal_point.second);
 
-	double min_entropy = 100.0;
-
 	PNG rootImage = cropImage(imIn, ul, lr, pow(2, k));
 
-	buildTree(&rootImage, k);//PROBABLY NEEDS TO RETURN SOMETHING ELSE
+	root = buildTree(&rootImage, k);
+	return;
 }
 
 //A functions that returns a cropped part of an original image
@@ -97,9 +96,26 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 //ToDoList:
 //the image passed to this function will be a square
 //calculate the average entropy of these 4 blocks
+	stats image(*im);
+	
 	if(k < 2){
-		return NULL;
+
+		pair<int,int> default_center_lr(1,1);
+		pair<int,int> zero(0,0);
+		HSLAPixel last_parent_avg = image.getAvg(zero, default_center_lr);
+		Node last_parent(default_center_lr, k, last_parent_avg);
+
+		Node SEleaf(zero, k, *im->getPixel(1,1));
+		last_parent.SE = &SEleaf;
+		Node SWleaf(zero, k, *im->getPixel(0,1));
+		last_parent.SW = &SWleaf;
+		Node NEleaf(zero, k, *im->getPixel(1,0));
+		last_parent.NE = &NEleaf;
+		Node NWleaf(zero, k, *im->getPixel(0,0));
+		last_parent.NW = &NWleaf;
+		return &last_parent;
 	}
+
 	pair<int,int> SEul;
 	pair<int,int> SElr;
 	pair<int,int> SWul;
@@ -108,9 +124,15 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 	pair<int,int> NElr;
 	pair<int,int> NWul;
 	pair<int,int> NWlr;
-	pair<int,int> optimal_point;
+	pair<int,int> optimal_pointul;
+	pair<int,int> optimal_SWul;
+	pair<int,int> optimal_NEul;
+	pair<int,int> optimal_NWul;
+	pair<int,int> optimal_pointlr;
+	pair<int,int> optimal_SWlr;
+	pair<int,int> optimal_NElr;
+	pair<int,int> optimal_NWlr;
 
-	stats image(*im);
 	
 	double min_entropy = 0.0;
 	double average_entropy = 100.0;
@@ -126,7 +148,6 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 			SEul.second = (j) % mod;
 			SElr.first = (i + (int)pow(2, k - 1) - 1) % mod;
 			SElr.second = (j + (int)pow(2, k - 1) - 1) % mod;
-			//PNG partSEimg = cropImage(*im, SEul, SElr, pow(2,k));
 			//Crop the image for SW part
 			SWul.first = (i + (int)pow(2, k - 1)) % mod;
 			SWul.second = (j) % mod;
@@ -145,47 +166,61 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 			NWlr.first = (i + (int)pow(2, k - 1) + (int)pow(2, k - 1) - 1) % mod;
 			NWlr.second = (j + (int)pow(2, k - 1) + (int)pow(2, k - 1) - 1) % mod;
 			//PNG partNWimg = cropImage(*im, NWul, NWlr, pow(2,k));
-			//Get the stats for all of the cropped images
-			//stats SE(partSEimg);
-			printf("Stats for SE created\n");
-			//stats SW(partSWimg);
-			printf("Stats for SW created\n");
-			//stats NE(partNEimg);
-			printf("Stats for NE created\n");
-			//stats NW(partNWimg);
-			printf("Stats for NW created\n");
-			//Set the origin and lr corner for all these same sized square images
-			//pair<int,int> origin;
-			//origin.first = 0;
-			//origin.second = 0;
-			//pair<int, int> end_corner;
-			//end_corner.first = pow(2, k - 1) - 1;
-			//end_corner.second = pow(2, k - 1) - 1;
-			//Get the entropy of the 4 newly cropped images
 
-			printf("Before entropy");
+			//printf("Before entropy");
 			double SE_entropy = image.entropy(SEul, SElr);
-			printf("SE entropy: %d\n", SE_entropy);
+			//printf("SE entropy: %f\n", SE_entropy);
 			double SW_entropy = image.entropy(SWul, SWlr);
-			printf("SW entropy: %d\n", SW_entropy);
+			//printf("SW entropy: %f\n", SW_entropy);
 			double NE_entropy = image.entropy(NEul, NElr);
-			printf("NE entropy: %d\n", NE_entropy);
+			//printf("NE entropy: %f\n", NE_entropy);
 			double NW_entropy = image.entropy(NWul, NWlr);
-			printf("NW entropy: %d\n", NW_entropy);
+			//printf("NW entropy: %f\n", NW_entropy);
 			// Calcuate the average entopy of these 4 images
 			average_entropy = (SE_entropy + SW_entropy + NE_entropy + NW_entropy) / 4;
 			//Compare their entropy to the minimum of the previous images' entropy
 			if(average_entropy < min_entropy) {
 				min_entropy = average_entropy;
-				optimal_point.first = SEul.first;
-				optimal_point.second = SEul.second;
-				printf("UPDATED OptimalX: %i, OptimalY %i\n", optimal_point.first, optimal_point.second);
+				optimal_pointul.first = SEul.first;
+				optimal_pointul.second = SEul.second;
+				optimal_SWul.first = optimal_pointul.first + inner_square_size;
+				optimal_SWul.second = optimal_pointul.second;
+				optimal_NEul.first = optimal_pointul.first;
+				optimal_NEul.second = optimal_pointul.second + inner_square_size;
+				optimal_NWul.first = optimal_pointul.first + inner_square_size;
+				optimal_NWul.second = optimal_pointul.second + inner_square_size;
+				printf("UPDATED OptimalX: %i, OptimalY %i\n", optimal_pointul.first, optimal_pointul.second);
 
 			}
+			//printf("I:  %i  J: %i Offset: %i\n", i,j,offset);
 		}
 	}
+	pair<int,int> origin(0,0);
+	pair<int,int> right_bottom(im->width() - 1, im->height() - 1);
+	HSLAPixel avg_pixel = image.getAvg(origin, right_bottom);
+	Node current_node(optimal_pointul, k, avg_pixel);
+	printf("Out of the for loop");
+	
+	optimal_pointlr.first = optimal_pointul.first + inner_square_size - 1;
+	optimal_pointlr.second = optimal_pointul.second + inner_square_size - 1;
+	optimal_SWlr.first = optimal_SWul.first + inner_square_size - 1;
+	optimal_SWlr.second = optimal_SWul.second + inner_square_size - 1;
+	optimal_NElr.first = optimal_NEul.first + inner_square_size - 1;
+	optimal_NElr.second = optimal_NEul.second + inner_square_size - 1;
+	optimal_NWlr.first = optimal_NWul.first + inner_square_size - 1;
+	optimal_NWlr.second = optimal_NWul.second + inner_square_size - 1;
 
+	PNG SEimage = cropImage(*im, optimal_pointul, optimal_pointlr, pow(2,k));
+	PNG SWimage = cropImage(*im, optimal_SWul, optimal_SWlr, pow(2,k));
+	PNG NEimage = cropImage(*im, optimal_NEul, optimal_NElr, pow(2,k));
+	PNG NWimage = cropImage(*im, optimal_NWul, optimal_NWlr, pow(2,k));
 	//Call the function recursively, ith passing the 4 images that have the minimal entropy
+	current_node.SE = buildTree(&SEimage, k-1);
+	current_node.SW = buildTree(&SWimage, k-1);
+	current_node.NE = buildTree(&NEimage, k-1);
+	current_node.NW = buildTree(&NWimage, k-1);
+
+	return &current_node;
 }
 
 PNG toqutree::render(){
