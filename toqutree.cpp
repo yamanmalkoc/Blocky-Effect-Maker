@@ -50,8 +50,7 @@ toqutree::toqutree(PNG & imIn, int k){
 	pair<int,int> optimal_point;
 	optimal_point.first = pow(2, k - 2);
 	optimal_point.second = pow(2, k - 2);
-	printf("OptimalX: %i, OptimalY %i\n", optimal_point.first, optimal_point.second);
-
+	
 	PNG rootImage = cropImage(imIn, ul, lr, pow(2, k));
 	pair<int,int> p(0,0);
 	HSLAPixel pix(0.0,0.0,0.0,0.0);
@@ -332,10 +331,14 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 	PNG NEimage = cropImage(*im, optimal_NEul, optimal_NElr, pow(2,k));
 	PNG NWimage = cropImage(*im, optimal_NWul, optimal_NWlr, pow(2,k));
 	//Call the function recursively, ith passing the 4 images that have the minimal entropy
-	current_node.SE = buildTree(&SEimage, k-1);
-	current_node.SW = buildTree(&SWimage, k-1);
-	current_node.NE = buildTree(&NEimage, k-1);
-	current_node.NW = buildTree(&NWimage, k-1);
+	Node n1 = *buildTree(&SEimage, k-1);
+	current_node.SE = &n1;
+	Node n2 = *buildTree(&SWimage, k-1);
+	current_node.SW = &n2;
+	Node n3 = *buildTree(&NEimage, k-1);
+	current_node.NE = &n3;
+	Node n4 = *buildTree(&NWimage, k-1);
+	current_node.NW = &n4;
 	printf("\nNew node is created! The info of this node is:\n");
 	printNode(&current_node);
 
