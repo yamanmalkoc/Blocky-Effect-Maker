@@ -38,8 +38,13 @@ toqutree::toqutree(PNG & imIn, int k){
 /* that imIn is large enough to contain an image of that size. */
 
 /* your code here */
+printf("YOOOOOOOOO");
+	//root->dimension = k;
+	printf("Yaman1");
 	int centerX = imIn.width() / 2;
+	printf("Yaman2");
 	int centerY = imIn.height() / 2;
+	printf("centerX: %i, centerY %i \n", centerX, centerY);
 
 	pair<int,int> ul;
 	ul.first = centerX - pow(2, k - 1);
@@ -205,28 +210,28 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 		SEleaf.SW = NULL;
 		SEleaf.NE = NULL;
 		SEleaf.NW = NULL;
-		printf("\nNew leaf is created! The info of this leaf is:\n");
+		printf("\nNew leaf is created! The info of SE is:\n");
 		printNode(&SEleaf);
 
 		SWleaf.SE = NULL;
 		SWleaf.SW = NULL;
 		SWleaf.NE = NULL;
 		SWleaf.NW = NULL;
-		printf("\nNew leaf is created! The info of this leaf is:\n");
-		printNode(&SWleaf);
+		printf("\nNew leaf is created! The info of NE is:\n");
+		printNode(&NEleaf);
 
 		NEleaf.SE = NULL;
 		NEleaf.SW = NULL;
 		NEleaf.NE = NULL;
 		NEleaf.NW = NULL;
-		printf("\nNew leaf is created! The info of this leaf is:\n");
-		printNode(&NEleaf);
+		printf("\nNew leaf is created! The info of SW is:\n");
+		printNode(&SWleaf);
 
 		NWleaf.SE = NULL;
 		NWleaf.SW = NULL;
 		NWleaf.NE = NULL;
 		NWleaf.NW = NULL;
-		printf("\nNew leaf is created! The info of this leaf is:\n");
+		printf("\nNew leaf is created! The info of NW is:\n");
 		printNode(&NWleaf);
 
 		Node * retPointer = &last_parent;
