@@ -180,6 +180,10 @@ toqutree::Node * toqutree::copy(const Node * other) {
 	int dim = other->dimension; 
 	HSLAPixel a = other->avg; 
     Node ret(ctr,dim,a);
+	ret.SE = other->SE;
+	ret.NE = other->NE;
+	ret.SW = other->SW;
+	ret.NW = other->NW;
     return &ret; 
 }
 
