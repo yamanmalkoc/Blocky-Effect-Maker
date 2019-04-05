@@ -65,7 +65,7 @@ printf("YOOOOOOOOO");
 	// temp = *buildTree(&rootImage, k);
 	this->root = buildTree(&rootImage, k);
 	printf("PRINTING THE ROOT NODE:\n");
-	printNode(this->root);
+	// printNode(this->root);
 	//printNode(this->root);
 	// printf("these are the children -----------------------------------------------\n");
 	// printNode(this->root->SE);
@@ -77,63 +77,58 @@ printf("YOOOOOOOOO");
 
 //Prints out the entire tree to be used for debugging purposes
 void toqutree::printTree(){
-	// std::queue<Node *> queue;
-	// Node * current_node = this->root;
-	// queue.push(current_node);
+	std::queue<Node *> queue;
+	Node * current_node = this->root;
+	queue.push(current_node);
 
-	// int counter = 0;
-	// while(!queue.empty()) {
-	// 	printf("A\n");
-	// 	current_node = queue.front();
-	// 	printf("B\n");
-	// 	queue.pop();
-	// 	printf("C\n");
-	// 	//printf("%i\n", current_node->dimension);
-	// 	printf("%i\n", counter);
-	// 	printNode(current_node);
-	// 	if(current_node->SE != NULL) {
-	// 		printf("Not Null SE\n");
-	// 		queue.push(current_node->SE);
-	// 		printf("Queue Size: %i\n", queue.size());
-	// 	}
-	// 	if(current_node->SW != NULL) {
-	// 		printf("Not Null SW\n");
-	// 		queue.push(current_node->SW);
-	// 		printf("Queue Size: %i\n", queue.size());
-	// 	}
-	// 	if(current_node->NE != NULL) {
-	// 		printf("Not Null NE\n");
-	// 		queue.push(current_node->NE);
-	// 		printf("Queue Size: %i\n", queue.size());
-	// 	}
-	// 	if(current_node->NW != NULL) {
-	// 		printf("Not Null NW\n");
-	// 		queue.push(current_node->NW);
-	// 		printf("Queue Size: %i\n", queue.size());
-	// 	}
-	// 	// if(queue.size() != 0){
-	// 	// 	if(current_node->dimension != queue.front()->dimension) {
-	// 	// 		printf("\n");
-	// 	// 	}
-	// 	// }
-	// 	printf("counter incremented");
-	// 	counter++;
+	int counter = 0;
+	while(!queue.empty()) {
+		printf("A\n");
+		current_node = queue.front();
+		printf("B\n");
+		queue.pop();
+		printf("C\n");
+		//printf("%i\n", current_node->dimension);
+		printf("%i\n", counter);
+		// printNode(current_node);
+		if(current_node->SE != NULL) {
+			printf("Not Null SE\n");
+			queue.push(current_node->SE);
+			printf("Queue Size: %i\n", queue.size());
+		}
+		if(current_node->SW != NULL) {
+			printf("Not Null SW\n");
+			queue.push(current_node->SW);
+			printf("Queue Size: %i\n", queue.size());
+		}
+		if(current_node->NE != NULL) {
+			printf("Not Null NE\n");
+			queue.push(current_node->NE);
+			printf("Queue Size: %i\n", queue.size());
+		}
+		if(current_node->NW != NULL) {
+			printf("Not Null NW\n");
+			queue.push(current_node->NW);
+			printf("Queue Size: %i\n", queue.size());
+		}
+		// if(queue.size() != 0){
+		// 	if(current_node->dimension != queue.front()->dimension) {
+		// 		printf("\n");
+		// 	}
+		// }
+		printf("counter incremented");
+		counter++;
 		
-	// }
+	}
 	
 	
-	// Node * current_nodeSE = this->root->SE;
-	// Node * current_nodeSW = ;
-	// Node * current_nodeNE = ;
-	// Node * current_nodeNW = ;
 
-	//printf("\nRoot_dim: %i\n", current_node->dimension);
-	//printf("SE: %i   SW: %i  NE:  %i    NW: %i\n", current_nodeSE->dimension, current_nodeSW->dimension, current_nodeNE->dimension, current_nodeNW->dimension);
-	printNode(this->root);
-	printNode(this->root->SE);
-	printNode(this->root->SW);
-	printNode(this->root->NE);
-	printNode(this->root->NW);
+	
+	// printNode(this->root);
+	// printNode(this->root->SE);
+	// printNode(this->root->SW);
+	// printNode(this->root->NE);
+	// printNode(this->root->NW);
 
 }
 
@@ -210,35 +205,35 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 		Node* NWleaf = new Node(zero, k - 1, *im->getPixel(0,0));
 		last_parent->NW = NWleaf;
 		printf("\nNew last_parent is created! The info of this last_parent is:\n");
-		printNode(last_parent);
+		// printNode(last_parent);
 
 		SEleaf->SE = NULL;
 		SEleaf->SW = NULL;
 		SEleaf->NE = NULL;
 		SEleaf->NW = NULL;
 		printf("\nNew leaf is created! The info of SE is:\n");
-		printNode(SEleaf);
+		// printNode(SEleaf);
 
 		SWleaf->SE = NULL;
 		SWleaf->SW = NULL;
 		SWleaf->NE = NULL;
 		SWleaf->NW = NULL;
 		printf("\nNew leaf is created! The info of NE is:\n");
-		printNode(NEleaf);
+		// printNode(NEleaf);
 
 		NEleaf->SE = NULL;
 		NEleaf->SW = NULL;
 		NEleaf->NE = NULL;
 		NEleaf->NW = NULL;
 		printf("\nNew leaf is created! The info of SW is:\n");
-		printNode(SWleaf);
+		// printNode(SWleaf);
 
 		NWleaf->SE = NULL;
 		NWleaf->SW = NULL;
 		NWleaf->NE = NULL;
 		NWleaf->NW = NULL;
 		printf("\nNew leaf is created! The info of NW is:\n");
-		printNode(NWleaf);
+		// printNode(NWleaf);
 
 		return last_parent;
 
@@ -349,15 +344,7 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 	current_node->NE = buildTree(&NEimage, k-1);
 	current_node->NW = buildTree(&NWimage, k-1);
 	printf("\nNew node is created! The info of this node is:\n");
-	printNode(current_node);
-
-	if(k == 2){
-		printf("have a yolo ------------------------------------------------------------------\n");
-		printNode(current_node->SE);
-		printNode(current_node->SW);
-		printNode(current_node->NE);
-		printNode(current_node->NW);
-	}
+	// printNode(current_node);
 
 	return current_node;
 	// return this_node;
@@ -412,21 +399,23 @@ PNG toqutree::render(){
 // My algorithm for this problem included a helper function
 // that was analogous to Find in a BST, but it navigated the 
 // quadtree, instead.
-	return render(root);
+printf("in render: =====================================================================\n");
+printNode(this->root);
+	return render(this->root);
 /* your code here */
 
 }
 
 
-PNG toqutree::render(Node *root){
+PNG toqutree::render(Node *node){
 	//base case
-	if(root->NE == NULL) return getNodePNG(root); 
+	if(node->NE == NULL) return getNodePNG(node); 
 
 	//recursive case
-	PNG NE = render(root->NE);
-	PNG NW = render(root->NW);
-	PNG SE = render(root->SE);
-	PNG SW = render(root->SW);
+	PNG NE = render(node->NE);
+	PNG NW = render(node->NW);
+	PNG SE = render(node->SE);
+	PNG SW = render(node->SW);
 
 	return createImage(NE,NW,SE,SW); 
 }
@@ -457,11 +446,11 @@ PNG toqutree::createImage(PNG NE, PNG NW, PNG SE, PNG SW){
 			if(x < width/2 && y < height/2){
 				p = NW.getPixel(x, y); 
 			}else if(x >= width/2 && y < height/2){
-				p = NE.getPixel(x - width, y);
+				p = NE.getPixel(x - width/2, y);
 			}else if(x < width/2 && y >= height/2){
-				p = SW.getPixel(x, y - height); 
+				p = SW.getPixel(x, y - height/2); 
 			}else if(x >= width/2 && y >= height/2){
-				p = SE.getPixel(x - width, y - height);  
+				p = SE.getPixel(x - width/2, y - height/2);  
 			}
 		}
 	}
