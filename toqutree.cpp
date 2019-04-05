@@ -38,13 +38,13 @@ toqutree::toqutree(PNG & imIn, int k){
 /* that imIn is large enough to contain an image of that size. */
 
 /* your code here */
-printf("YOOOOOOOOO");
+// printf("YOOOOOOOOO");
 	//root->dimension = k;
-	printf("Yaman1");
+	// printf("Yaman1");
 	int centerX = imIn.width() / 2;
-	printf("Yaman2");
+	// printf("Yaman2");
 	int centerY = imIn.height() / 2;
-	printf("centerX: %i, centerY %i \n", centerX, centerY);
+	// printf("centerX: %i, centerY %i \n", centerX, centerY);
 
 	pair<int,int> ul;
 	ul.first = centerX - pow(2, k - 1);
@@ -52,21 +52,20 @@ printf("YOOOOOOOOO");
 	pair<int,int> lr;
 	lr.first = centerX + pow(2, k - 1);
 	lr.second = centerY + pow(2, k - 1);
-	pair<int,int> optimal_point;
-	optimal_point.first = pow(2, k - 2);
-	optimal_point.second = pow(2, k - 2);
 	
-	PNG rootImage = cropImage(imIn, ul, lr, pow(2, k));
+	PNG rootImage = cropImage(imIn, ul, lr, imIn.width());
 	pair<int,int> p(0,0);
 	HSLAPixel pix(0.0,0.0,0.0,0.0);
 
 	// Node temp(p,3,pix);
 	// root = &temp; 
 	// temp = *buildTree(&rootImage, k);
+	// imIn.writeToFile("images/toctreeboi.png");
+	// rootImage.writeToFile("images/rootimage.png");
 	this->root = buildTree(&rootImage, k);
-	printf("PRINTING THE ROOT NODE:\n");
+	// printf("PRINTING THE ROOT NODE:\n");
 	// printNode(this->root);
-	//printNode(this->root);
+	// printNode(this->root);
 	// printf("these are the children -----------------------------------------------\n");
 	// printNode(this->root->SE);
 	// printNode(this->root->SW);
@@ -83,40 +82,39 @@ void toqutree::printTree(){
 
 	int counter = 0;
 	while(!queue.empty()) {
-		printf("A\n");
+		// printf("A\n");
 		current_node = queue.front();
-		printf("B\n");
+		// printf("B\n");
 		queue.pop();
-		printf("C\n");
+		// printf("C\n");
 		//printf("%i\n", current_node->dimension);
-		printf("%i\n", counter);
+		// printf("%i\n", counter);
 		// printNode(current_node);
 		if(current_node->SE != NULL) {
-			printf("Not Null SE\n");
+			// printf("Not Null SE\n");
 			queue.push(current_node->SE);
-			printf("Queue Size: %i\n", queue.size());
 		}
 		if(current_node->SW != NULL) {
-			printf("Not Null SW\n");
+			// printf("Not Null SW\n");
 			queue.push(current_node->SW);
-			printf("Queue Size: %i\n", queue.size());
+			// printf("Queue Size: %i\n", queue.size());
 		}
 		if(current_node->NE != NULL) {
-			printf("Not Null NE\n");
+			// printf("Not Null NE\n");
 			queue.push(current_node->NE);
-			printf("Queue Size: %i\n", queue.size());
+			// printf("Queue Size: %i\n", queue.size());
 		}
 		if(current_node->NW != NULL) {
-			printf("Not Null NW\n");
+			// printf("Not Null NW\n");
 			queue.push(current_node->NW);
-			printf("Queue Size: %i\n", queue.size());
+			// printf("Queue Size: %i\n", queue.size());
 		}
 		// if(queue.size() != 0){
 		// 	if(current_node->dimension != queue.front()->dimension) {
 		// 		printf("\n");
 		// 	}
 		// }
-		printf("counter incremented");
+		// printf("counter incremented");
 		counter++;
 		
 	}
@@ -152,20 +150,16 @@ int toqutree::size() {
 int toqutree::traversal(Node *root, int sum){
 	//base case
 	if(root == NULL){
-		printf("baseCase\n");
+		// printf("baseCase\n");
 		return 1;
 	} 
 
 	//recursive case
 	int sumCopy = sum; 
 	sumCopy += traversal(root->NE, sumCopy); 
-	printf("first");
 	sumCopy += traversal(root->NW, sumCopy); 
-	printf("second");
 	sumCopy += traversal(root->SE, sumCopy); 
-	printf("third");
 	sumCopy += traversal(root->SW, sumCopy); 
-	printf("forth");
 
 	return sumCopy;
 	//check the current node
@@ -204,37 +198,31 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 		last_parent->NE = NEleaf;
 		Node* NWleaf = new Node(zero, k - 1, *im->getPixel(0,0));
 		last_parent->NW = NWleaf;
-		printf("\nNew last_parent is created! The info of this last_parent is:\n");
 		// printNode(last_parent);
 
 		SEleaf->SE = NULL;
 		SEleaf->SW = NULL;
 		SEleaf->NE = NULL;
 		SEleaf->NW = NULL;
-		printf("\nNew leaf is created! The info of SE is:\n");
-		// printNode(SEleaf);
 
 		SWleaf->SE = NULL;
 		SWleaf->SW = NULL;
 		SWleaf->NE = NULL;
 		SWleaf->NW = NULL;
-		printf("\nNew leaf is created! The info of NE is:\n");
 		// printNode(NEleaf);
 
 		NEleaf->SE = NULL;
 		NEleaf->SW = NULL;
 		NEleaf->NE = NULL;
 		NEleaf->NW = NULL;
-		printf("\nNew leaf is created! The info of SW is:\n");
+		
 		// printNode(SWleaf);
 
 		NWleaf->SE = NULL;
 		NWleaf->SW = NULL;
 		NWleaf->NE = NULL;
 		NWleaf->NW = NULL;
-		printf("\nNew leaf is created! The info of NW is:\n");
-		// printNode(NWleaf);
-
+	
 		return last_parent;
 
 		
@@ -332,18 +320,23 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 	optimal_NElr.second = optimal_NEul.second + inner_square_size - 1;
 	optimal_NWlr.first = optimal_NWul.first + inner_square_size - 1;
 	optimal_NWlr.second = optimal_NWul.second + inner_square_size - 1;
-	printf("SEulfirst: %i, SEulsecond: %i\n", optimal_pointul.first, optimal_pointul.second);
-
+	// printf("SEulfirst: %i, SEulsecond: %i\n", optimal_pointul.first, optimal_pointul.second);
+	// im->writeToFile("images/imageOriginalBRYSON.png");
 	PNG SEimage = cropImage(*im, optimal_pointul, optimal_pointlr, pow(2,k));
+	// SEimage.writeToFile("images/SEimage.png");
 	PNG SWimage = cropImage(*im, optimal_SWul, optimal_SWlr, pow(2,k));
+	// SWimage.writeToFile("images/SWimage.png");
 	PNG NEimage = cropImage(*im, optimal_NEul, optimal_NElr, pow(2,k));
+	// NEimage.writeToFile("images/NEimage.png");
 	PNG NWimage = cropImage(*im, optimal_NWul, optimal_NWlr, pow(2,k));
+	// NWimage.writeToFile("images/NWimage.png");
+	return current_node;
 	//Call the function recursively, ith passing the 4 images that have the minimal entropy
 	current_node->SE = buildTree(&SEimage, k-1);
 	current_node->SW = buildTree(&SWimage, k-1);
 	current_node->NE = buildTree(&NEimage, k-1);
 	current_node->NW = buildTree(&NWimage, k-1);
-	printf("\nNew node is created! The info of this node is:\n");
+	// printf("\nNew node is created! The info of this node is:\n");
 	// printNode(current_node);
 
 	return current_node;
@@ -352,44 +345,44 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 
 
 void toqutree::printNode(Node *node){
-	if(node == NULL){
-		printf("This node is NULL\n"); 
-	}else{
-		printf("This node is Not NULL Address: %x\n", node);
-		printf("Dim: %i\n", node->dimension);
+	// if(node == NULL){
+	// 	printf("This node is NULL\n"); 
+	// }else{
+	// 	printf("This node is Not NULL Address: %x\n", node);
+	// 	printf("Dim: %i\n", node->dimension);
 
-		if(&node->center != NULL){
-			printf("Center: %i, %i\n", node->center.first, node->center.second);
-		}else{
-			printf("Center is NULL\n"); 
-		}
-		if(&node->avg != NULL){
-			printf("Avg: Hue %f, Sat %f, Lum %f\n", node->avg.h, node->avg.s, node->avg.l);
-		}else{
-			printf("Avg is NULL\n"); 
-		}
-		if(node->SE != NULL){
-			printf("SE is not NULL Address: %x\n", node->SE);
-		}else{
-			printf("SE is NULL\n"); 
-		}
-		if(node->SW != NULL){
-			printf("SW is not NULL Address: %x\n", node->SW);
-		}else{
-			printf("SW is NULL\n"); 
-		}
-		if(node->NE != NULL){
-			printf("NE is not NULL Address: %x\n", node->NE);
-		}else{
-			printf("NE is NULL\n"); 
-		}
-		if(node->NW != NULL){
-			printf("NW is not NULL Address: %x\n", node->NW);
-		}else{
-			printf("NW is NULL\n"); 
-		}
-	}
-	printf("\n\n");
+	// 	if(&node->center != NULL){
+	// 		printf("Center: %i, %i\n", node->center.first, node->center.second);
+	// 	}else{
+	// 		printf("Center is NULL\n"); 
+	// 	}
+	// 	if(&node->avg != NULL){
+	// 		printf("Avg: Hue %f, Sat %f, Lum %f\n", node->avg.h, node->avg.s, node->avg.l);
+	// 	}else{
+	// 		printf("Avg is NULL\n"); 
+	// 	}
+	// 	if(node->SE != NULL){
+	// 		printf("SE is not NULL Address: %x\n", node->SE);
+	// 	}else{
+	// 		printf("SE is NULL\n"); 
+	// 	}
+	// 	if(node->SW != NULL){
+	// 		printf("SW is not NULL Address: %x\n", node->SW);
+	// 	}else{
+	// 		printf("SW is NULL\n"); 
+	// 	}
+	// 	if(node->NE != NULL){
+	// 		printf("NE is not NULL Address: %x\n", node->NE);
+	// 	}else{
+	// 		printf("NE is NULL\n"); 
+	// 	}
+	// 	if(node->NW != NULL){
+	// 		printf("NW is not NULL Address: %x\n", node->NW);
+	// 	}else{
+	// 		printf("NW is NULL\n"); 
+	// 	}
+	// }
+	// printf("\n\n");
 
 }
 
@@ -399,7 +392,7 @@ PNG toqutree::render(){
 // My algorithm for this problem included a helper function
 // that was analogous to Find in a BST, but it navigated the 
 // quadtree, instead.
-printf("in render: =====================================================================\n");
+// printf("in render: =====================================================================\n");
 printNode(this->root);
 	return render(this->root);
 /* your code here */
@@ -465,38 +458,40 @@ void toqutree::prune(double tol){
 
 }
 
-void toqutree::prune(Node *root, double tol){
+void toqutree::prune(Node *node, double tol){
 	//base case
 	if(root->NE == NULL) 
 		return; 
 
 	//recursive case
-	if(validToPrune(root,tol,root->avg)){
+	if(validToPrune(node,tol,node->avg)){
 		root->NE = NULL;
 		root->NW = NULL;
 		root->SE = NULL;
 		root->SW = NULL;
+	}else{
+		prune(root->NE, tol); 
+		prune(root->NW, tol); 
+		prune(root->SE, tol); 
+		prune(root->SW, tol); 
 	}
-
-	prune(root->NE, tol); 
-	prune(root->NW, tol); 
-	prune(root->SE, tol); 
-	prune(root->SW, tol); 
-
+	return;
 }
 
-int toqutree::validToPrune(Node *root, double tol, HSLAPixel avg){
+int toqutree::validToPrune(Node *node, double tol, HSLAPixel avg){
 	//basecase
-	if(root == NULL) return 1; 
+	if(node == NULL) return 1; 
 
 	//recursive case
-	if(validToPrune(root->NE, tol, avg) == 0) return 0;
-	if(validToPrune(root->NW, tol, avg) == 0) return 0;
-	if(validToPrune(root->SE, tol, avg) == 0) return 0;
-	if(validToPrune(root->SW, tol, avg) == 0) return 0;
+	if(validToPrune(node->NE, tol, avg) == 0) return 0;
+	if(validToPrune(node->NW, tol, avg) == 0) return 0;
+	if(validToPrune(node->SE, tol, avg) == 0) return 0;
+	if(validToPrune(node->SW, tol, avg) == 0) return 0;
 	//Check if any pixel is NOT within the tolerance. 
-	if(root->avg.dist(avg) > tol){
+	if(node->avg.dist(avg) > tol){
 		return 0; 
+	}else{
+		return 1;
 	}
 }
  
@@ -511,12 +506,12 @@ toqutree::Node * toqutree::copy(const Node * other) {
 	pair<int,int> ctr = other->center; 
 	int dim = other->dimension; 
 	HSLAPixel a = other->avg; 
-    Node ret(ctr,dim,a);
-	ret.SE = other->SE;
-	ret.NE = other->NE;
-	ret.SW = other->SW;
-	ret.NW = other->NW;
-    return &ret; 
+    Node* ret = new Node(ctr,dim,a);
+	ret->SE = other->SE;
+	ret->NE = other->NE;
+	ret->SW = other->SW;
+	ret->NW = other->NW;
+    return ret; 
 }
 
 

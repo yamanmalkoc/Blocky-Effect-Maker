@@ -253,14 +253,16 @@ using namespace cs221util;
 
 TEST_CASE("toqutree::basic copy","[weight=1][part=toqutree]"){
     PNG img;
-    img.readFromFile("images/geo.png");
+    img.readFromFile("images/ada.png");
 
-    toqutree t1(img,2);
+    toqutree t1(img,7);
     // t1.printTree();
     // toqutree t1copy(t1);
+    printf("now we are pruning ---------------------------------------------------------\n");
+    // t1.prune(0.05);
     printf("now we are rendering ---------------------------------------------------------\n");
     PNG out = t1.render();
-
+    out.writeToFile("images/outBrysonYaman.png");
     // REQUIRE(out==img);
 }
 
