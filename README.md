@@ -5,4 +5,5 @@ This is the original version of the image, before inputting it to this program.
 ![The Original Version of the Image (Before Making it Blocky)](https://i.ibb.co/PmwC5Ys/PA3pic1.png)
 
 After editing it.
+
 ![The Edited Version of the Image (After Making it Blocky)](https://i.ibb.co/1r2LXsV/output-PA3pic1.png)
